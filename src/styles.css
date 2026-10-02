@@ -399,6 +399,7 @@ a {
 @media (min-width: 1080px) {
   .menu {
     height: 100vh;
+    overflow-y: auto;
     border-bottom: 0;
     border-right: 1px solid var(--line);
     background: var(--paper-2);
@@ -406,6 +407,15 @@ a {
     flex-direction: column;
     padding: 28px 18px 22px;
     gap: 28px;
+  }
+
+  .menu::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .menu::-webkit-scrollbar-thumb {
+    background-color: var(--line);
+    border-radius: 10px;
   }
 
   .menu__topo {
