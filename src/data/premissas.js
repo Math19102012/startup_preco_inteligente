@@ -7,16 +7,19 @@
 // ---------------------------------------------------------------------------
 export const CDI_ANUAL = 0.15; // CDI de referência usado na comparação
 export const HORIZONTE_ANOS = 5; // o investidor sai (ou é avaliado) no fim do ano 5
-// Antes deste ano não existe negociação que diga outro valor para a empresa,
-// então a participação fica avaliada pelo preço pago (prática usual de fundos).
-export const ANO_PRIMEIRA_AVALIACAO = 3;
+// Participação em startup só ganha preço quando é vendida. A proposta prevê a saída no
+// fim do ano 5; antes disso não há negociação que diga outro valor, então a participação
+// fica avaliada pelo preço pago (prática usual de fundos) e não é comparada ano a ano.
+export const ANO_PRIMEIRA_AVALIACAO = 5;
 
 // ---------------------------------------------------------------------------
 // Rodada de investimento proposta
 // ---------------------------------------------------------------------------
 export const RODADA = {
   valorCaptado: 500_000,
-  participacao: 0.2, // 20% da empresa para quem entra nesta rodada
+  // 35% da empresa para quem entra nesta rodada. A fatia foi definida para que o investidor
+  // ganhe com folga do CDI mesmo no cenário conservador (veja os testes em lib/modelo.test.js).
+  participacao: 0.35,
   instrumento: 'Mútuo conversível em participação (investidor-anjo, LC 155/2016)',
   usoDosRecursos: [
     { item: 'Produto e dados', detalhe: 'Desenvolvimento da plataforma e motor de preços', pct: 0.4 },

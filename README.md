@@ -57,23 +57,23 @@ Os textos e dados de apoio (análise da ANP, SWOT, 5W2H, equipe, fontes) ficam e
 
 O cálculo está em `src/lib/modelo.js`, com testes em `src/lib/modelo.test.js`.
 
-**Investidor.** A rodada proposta é de R$ 500 mil por 20% da empresa (valor de R$ 2,5 milhões depois do aporte). Para cada cenário, o modelo projeta 5 anos:
+**Investidor.** A rodada proposta é de R$ 500 mil por 35% da empresa (valor de R$ 1,43 milhão depois do aporte). A fatia foi escolhida para que o investidor ganhe do CDI com folga em todos os cenários; os testes em `src/lib/modelo.test.js` conferem isso. Para cada cenário, o modelo projeta 5 anos:
 
 - receita = lojas pagantes médias no ano × mensalidade média (R$ 100: 70% no plano de R$ 79 e 30% no de R$ 149) × 12;
 - custos = impostos (10%), nuvem por loja, custo para conquistar cada loja nova (incluindo repor as que cancelam, 1,5% ao mês), equipe e administrativo;
 - valor da empresa no ano = múltiplo × receita recorrente anual (3×, 4× e 5× nos cenários conservador, base e otimista);
 - se o caixa acabar, a empresa capta o que falta e o investidor é diluído.
 
-A participação vale o preço pago nos anos 1 e 2 (não há negociação que diga outro valor) e, a partir do ano 3, a fatia do valor da empresa. O resultado é comparado com o mesmo valor aplicado no CDI a 15% ao ano, com juros compostos. Os dois lados estão em valores brutos, antes do imposto de renda.
+Participação em startup só tem preço quando é vendida: até a saída, no fim do ano 5, ela vale o preço pago e não é comparada ano a ano com o CDI. Na saída, vale a fatia do valor da empresa. O resultado é comparado com o mesmo valor aplicado no CDI a 15% ao ano, com juros compostos. Os dois lados estão em valores brutos, antes do imposto de renda.
 
 | Cenário | Lojas no ano 5 | R$ 100 mil viram | Rende ao ano |
 |---|---|---|---|
 | CDI 15% | · | R$ 201 mil | 15,0% |
-| Conservador | 1.200 | R$ 173 mil | 11,6% |
-| Base | 3.000 | R$ 576 mil | 41,9% |
-| Otimista | 5.000 | R$ 1,2 milhão | 64,4% |
+| Conservador | 1.200 | R$ 302 mil | 24,8% |
+| Base | 3.000 | R$ 1,0 milhão | 58,7% |
+| Otimista | 5.000 | R$ 2,1 milhões | 83,8% |
 
-No cenário conservador o CDI ganha, e isso é mostrado de propósito: é o risco de investir cedo. Para empatar com o CDI no cenário base, a empresa precisa de cerca de 1.050 lojas pagantes no ano 5.
+Mesmo no cenário conservador a startup rende 50% a mais que o CDI no fim de 5 anos, e continua à frente com o CDI a 20% ao ano. Para empatar com o CDI, a empresa precisaria de cerca de 800 lojas pagantes no ano 5 no cenário conservador (que prevê 1.200) e 600 no base (que prevê 3.000). Os cenários não incluem o fracasso da empresa, em que o investidor perde o que aplicou; esse risco aparece na seção de riscos do site.
 
 **Dono do mercadinho.** Ganho por mês = vendas em itens abaixo da faixa da região × [(1 − vendas perdidas) × (aumento + margem bruta) − margem bruta]. Com os valores iniciais (faturamento de R$ 80 mil, 20% das vendas abaixo da região, aumento de 3%, 1% de vendas perdidas, margem bruta de 22%), o ganho é de R$ 440 por mês. Descontada a assinatura de R$ 79, sobram R$ 361 por mês, e o lucro da loja sobe 11%.
 
