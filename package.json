@@ -3,13 +3,14 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Site de apresentação da startup Preço Inteligente",
+  "description": "Site de apresentação e painel do lojista da startup Preço Inteligente",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:offline": "vite build --mode offline",
+    "build:offline": "vite build --mode offline && vite build --mode offline-painel",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "telas": "vite build && node scripts/capturar-telas.mjs"
   },
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",

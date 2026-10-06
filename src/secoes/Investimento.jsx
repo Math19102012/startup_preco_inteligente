@@ -95,7 +95,7 @@ export function Investimento() {
         <div className="largura">
           <header className="cabecalho">
             <span className="sobretitulo" style={{ color: 'var(--on-dark-2)' }}>
-              <span className="sobretitulo__n">07</span>
+              <span className="sobretitulo__n">08</span>
               Investimento
             </span>
             <h2 id="investimento-titulo">Quanto rende investir no Preço Inteligente</h2>

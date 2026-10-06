@@ -1,0 +1,54 @@
+/* Cores, fontes e medidas compartilhadas pelo site e pelo painel do lojista. */
+:root {
+  --ink: #1d2530;
+  --ink-2: #46525e;
+  --muted: #66737f;
+  --line: #dde4e7;
+  --line-2: #eaeff1;
+  --paper: #ffffff;
+  --paper-2: #f4f7f8;
+
+  --teal: #0f6e72;
+  --teal-ink: #0b5558;
+  --teal-deep: #0b3b3e;
+  --teal-deeper: #072a2c;
+  --teal-tint: #eaf5f5;
+  --teal-soft: #bfdcdc;
+
+  --amber: #c0661a; /* Preço Inteligente nos gráficos */
+  --amber-ink: #95500f; /* texto em laranja sobre fundo claro */
+  --amber-tint: #fdf3e8;
+  --amber-soft: #f1c9a3;
+
+  --tag: #ffd84a; /* etiqueta de gôndola */
+  --tag-edge: #e8bd20;
+
+  --slate: #6b7a88; /* CDI e concorrentes */
+  --good: #1f7f84;
+  --bad: #c24a52;
+  --bad-tint: #fbecee;
+
+  --on-dark: #f1f7f7;
+  --on-dark-2: #a8c6c6;
+  --line-dark: #1f5659;
+
+  --font-display: 'Bricolage Grotesque Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Figtree Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-tag: 'Barlow Condensed', 'Arial Narrow', 'Roboto Condensed', sans-serif;
+
+  --fs-hero: clamp(2.2rem, 3.4vw + 0.6rem, 3.6rem);
+  --fs-h2: clamp(1.9rem, 2.6vw + 0.8rem, 2.9rem);
+  --fs-h3: clamp(1.15rem, 0.6vw + 0.95rem, 1.35rem);
+  --fs-lead: clamp(1.05rem, 0.35vw + 0.98rem, 1.22rem);
+  --fs-body: 1.0625rem;
+  --fs-small: 0.9rem;
+  --fs-micro: 0.78rem;
+
+  --menu-w: 272px;
+  --gutter: clamp(16px, 4vw, 56px);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 2px rgb(29 37 48 / 0.06), 0 8px 24px -12px rgb(29 37 48 / 0.18);
+
+  color-scheme: light;
+}

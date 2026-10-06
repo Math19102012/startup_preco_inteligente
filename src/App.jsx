@@ -8,12 +8,14 @@ import { Mercadinho } from './secoes/Mercadinho.jsx';
 import { Mercado } from './secoes/Mercado.jsx';
 import { Plano } from './secoes/Plano.jsx';
 import { Problema } from './secoes/Problema.jsx';
+import { Produto } from './secoes/Produto.jsx';
 import { Solucao } from './secoes/Solucao.jsx';
 
 const SECOES = [
   { id: 'inicio', rotulo: 'Início' },
   { id: 'problema', rotulo: 'O problema' },
   { id: 'solucao', rotulo: 'A solução' },
+  { id: 'produto', rotulo: 'O produto' },
   { id: 'empresa', rotulo: 'A empresa' },
   { id: 'mercado', rotulo: 'Mercado' },
   { id: 'mercadinho', rotulo: 'Lucro do mercadinho' },
@@ -25,7 +27,7 @@ const IDS = SECOES.map((s) => s.id);
 export default function App() {
   const ativa = useSecaoAtiva(IDS);
 
-  // Teclas 1 a 8 levam direto para cada seção (útil na apresentação para a banca).
+  // Teclas 1 a 9 levam direto para cada seção (útil na apresentação para a banca).
   useEffect(() => {
     const aoTeclar = (e) => {
       if (e.altKey || e.ctrlKey || e.metaKey) return;
@@ -51,6 +53,7 @@ export default function App() {
         <Inicio />
         <Problema />
         <Solucao />
+        <Produto />
         <Empresa />
         <Mercado />
         <Mercadinho />

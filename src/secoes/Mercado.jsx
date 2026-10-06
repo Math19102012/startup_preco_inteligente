@@ -23,7 +23,7 @@ export function Mercado() {
   return (
     <Secao
       id="mercado"
-      n="05"
+      n="06"
       rotulo="Mercado e concorrência"
       titulo="Um mercado enorme, e um espaço que ninguém ocupa"
       lead="As ferramentas de precificação que existem no Brasil miram o varejo de médio e grande porte e o comércio eletrônico. O mercadinho de bairro, que é a maior parte das lojas, ficou com a planilha e a intuição."
