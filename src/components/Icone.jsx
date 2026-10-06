@@ -16,6 +16,23 @@ const CAMINHOS = {
   xis: 'M6 6l12 12M18 6L6 18',
   escudo: 'M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z',
   alvo: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM12 11v2h.01',
+  // usados no painel do lojista
+  casa: 'M4 11l8-7 8 7M6 9.5V20h12V9.5M10 20v-5h4v5',
+  etiqueta: 'M3 12V4h8l10 10-8 8L3 12zM7.5 7.5h.01',
+  documento: 'M7 3h7l5 5v13H7V3zM14 3v5h5M10 13h6M10 17h6',
+  caixa: 'M4 7l8-4 8 4v10l-8 4-8-4V7zM4 7l8 4 8-4M12 11v10',
+  plugue: 'M9 3v5M15 3v5M7 8h10v3a5 5 0 0 1-10 0V8zM12 16v5',
+  ajuste: 'M4 7h10M18 7h2M4 17h4M12 17h8M14 4.5v5M8 14.5v5',
+  barras: 'M4 5v14M7 5v14M10 5v14M14 5v14M16 5v14M20 5v14',
+  busca: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4',
+  mais: 'M12 5v14M5 12h14',
+  enviar: 'M12 16V4M7 9l5-5 5 5M5 20h14',
+  baixar: 'M12 4v12M7 11l5 5 5-5M5 20h14',
+  imprimir: 'M7 9V3h10v6M7 17H4v-7h16v7h-3M7 14h10v7H7v-7z',
+  lixeira: 'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13',
+  lapis: 'M4 20l4-1L19 8l-3-3L5 16l-1 4zM14 7l3 3',
+  sair: 'M14 4h5v16h-5M10 8l-4 4 4 4M6 12h10',
+  relogio: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 2',
 };
 
 export function Icone({ nome, tamanho = 18, titulo }) {

@@ -26,8 +26,8 @@ export function Inicio() {
             <a className="botao botao--tag" href="#investimento">
               Ver quanto rende investir
             </a>
-            <a className="botao botao--contorno" href="#problema">
-              Entender o problema
+            <a className="botao botao--contorno" href="#produto">
+              Ver o produto funcionando
             </a>
           </div>
         </div>

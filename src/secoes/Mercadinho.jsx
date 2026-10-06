@@ -34,7 +34,7 @@ export function Mercadinho() {
   return (
     <Secao
       id="mercadinho"
-      n="06"
+      n="07"
       rotulo="Lucro do mercadinho"
       titulo="Quanto o dono do mercadinho ganha"
       lead="A assinatura só se sustenta se o cliente ganhar bem mais do que paga. Os valores iniciais descrevem um minimercado típico de 1 a 3 caixas. Mexa nos controles para testar outras lojas."

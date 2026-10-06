@@ -12,7 +12,9 @@ function passoRedondo(maximo, alvo = 5) {
 
 const rotuloAno = (a) => (a === 0 ? 'Hoje' : `Ano ${a}`);
 
-// Evolução do mesmo valor no CDI e na startup, ano a ano.
+// Evolução do mesmo valor no CDI, ano a ano, e o valor da participação na startup nos anos
+// em que ela tem preço. Antes da primeira avaliação não há negociação, então o gráfico não
+// desenha um valor inventado para a startup nesses anos.
 export function LinhaInvestimento({ serie, anoPrimeiraAvaliacao }) {
   const [ref, w] = useLargura(720);
   const [ano, setAno] = useState(null);
@@ -30,7 +32,9 @@ export function LinhaInvestimento({ serie, anoPrimeiraAvaliacao }) {
 
   const x = (a) => m.esquerda + (a / ultimo.ano) * (w - m.esquerda - m.direita);
   const y = (v) => m.topo + (1 - v / teto) * (altura - m.topo - m.base);
-  const caminho = (chave) => serie.map((p, i) => `${i ? 'L' : 'M'}${x(p.ano)},${y(p[chave])}`).join(' ');
+  const caminho = (chave, pontos = serie) => pontos.map((p, i) => `${i ? 'L' : 'M'}${x(p.ano)},${y(p[chave])}`).join(' ');
+  const avaliados = serie.filter((p) => p.avaliado);
+  const temPreco = (p) => p.ano === 0 || p.avaliado;
 
   // rótulos no fim das linhas; se ficarem próximos demais, afasta e liga com um traço
   const fins = [
@@ -87,7 +91,7 @@ export function LinhaInvestimento({ serie, anoPrimeiraAvaliacao }) {
               fill="var(--paper-2)"
             />
             <text x={x(0) + 8} y={m.topo + 16} fontSize="11.5" fontWeight="600" fill="var(--muted)">
-              {compacto ? 'Sem negociação' : 'Sem negociação: vale o preço pago'}
+              {compacto ? 'Sem preço até a saída' : 'Participação sem preço de mercado até a saída'}
             </text>
           </g>
         )}
@@ -125,10 +129,25 @@ export function LinhaInvestimento({ serie, anoPrimeiraAvaliacao }) {
         )}
 
         <path d={caminho('cdi')} fill="none" stroke="var(--slate)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-        <path d={caminho('startup')} fill="none" stroke="var(--amber)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+        {avaliados.length > 1 && (
+          <path d={caminho('startup', avaliados)} fill="none" stroke="var(--amber)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+        )}
+        {/* distância entre o CDI e a startup na saída */}
+        <line
+          x1={x(ultimo.ano)}
+          x2={x(ultimo.ano)}
+          y1={y(ultimo.cdi)}
+          y2={y(ultimo.startup)}
+          stroke="var(--amber)"
+          strokeWidth="2"
+          strokeDasharray="4 4"
+        />
+        <circle cx={x(0)} cy={y(serie[0].startup)} r="5" fill="var(--amber)" stroke="var(--paper)" strokeWidth="2" />
 
         {pontoAtivo &&
-          ['cdi', 'startup'].map((k) => (
+          ['cdi', 'startup']
+            .filter((k) => k === 'cdi' || temPreco(pontoAtivo))
+            .map((k) => (
             <circle
               key={k}
               cx={x(pontoAtivo.ano)}
@@ -167,11 +186,15 @@ export function LinhaInvestimento({ serie, anoPrimeiraAvaliacao }) {
           <strong>{rotuloAno(pontoAtivo.ano)}</strong>
           <dl>
             <dt>Preço Inteligente</dt>
-            <dd>{reais0(pontoAtivo.startup)}</dd>
+            <dd>{temPreco(pontoAtivo) ? reais0(pontoAtivo.startup) : 'sem preço até a saída'}</dd>
             <dt>CDI</dt>
             <dd>{reais0(pontoAtivo.cdi)}</dd>
-            <dt>Diferença</dt>
-            <dd>{reais0(pontoAtivo.startup - pontoAtivo.cdi)}</dd>
+            {pontoAtivo.ano > 0 && temPreco(pontoAtivo) && (
+              <>
+                <dt>Diferença</dt>
+                <dd>{reais0(pontoAtivo.startup - pontoAtivo.cdi)}</dd>
+              </>
+            )}
           </dl>
         </div>
       )}

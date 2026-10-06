@@ -16,7 +16,7 @@ export function Empresa() {
   return (
     <Secao
       id="empresa"
-      n="04"
+      n="05"
       rotulo="A empresa"
       titulo="Assinatura mensal, produto digital, custo baixo"
       lead="O Preço Inteligente é uma startup de software como serviço. A loja paga uma mensalidade, sem taxa de instalação, sem fidelidade e sem equipamento. Não temos estoque nem logística: o custo é nuvem e hora da equipe."

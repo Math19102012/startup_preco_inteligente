@@ -95,7 +95,7 @@ export function Investimento() {
         <div className="largura">
           <header className="cabecalho">
             <span className="sobretitulo" style={{ color: 'var(--on-dark-2)' }}>
-              <span className="sobretitulo__n">07</span>
+              <span className="sobretitulo__n">08</span>
               Investimento
             </span>
             <h2 id="investimento-titulo">Quanto rende investir no Preço Inteligente</h2>
@@ -209,8 +209,8 @@ export function Investimento() {
                   </p>
                 ) : (
                   <p>
-                    Neste cenário o CDI ganha: {reaisCompacto(sim.cdiFinal)} contra <b>{reaisCompacto(sim.startupFinal)}</b>{' '}
-                    na startup. É o risco de investir cedo, e por isso o cenário base precisa render muito mais que o CDI.
+                    Com o CDI a {pct(cdi)} neste cenário, o CDI ganha: {reaisCompacto(sim.cdiFinal)} contra{' '}
+                    <b>{reaisCompacto(sim.startupFinal)}</b> na startup.
                   </p>
                 )}
                 <small>
@@ -231,9 +231,10 @@ export function Investimento() {
                 </div>
                 <LinhaInvestimento serie={sim.serie} anoPrimeiraAvaliacao={ANO_PRIMEIRA_AVALIACAO} />
                 <p className="nota" style={{ marginTop: 12 }}>
-                  Nos primeiros anos a participação não tem com quem ser negociada, então vale o que foi pago. A partir do
-                  ano {ANO_PRIMEIRA_AVALIACAO}, vale a sua fatia do valor da empresa, estimado em{' '}
-                  {CENARIOS[cenarioId].multiploReceita} vezes a receita recorrente anual.
+                  Participação em startup só tem preço quando é vendida. Até a saída, no ano {HORIZONTE_ANOS}, não há
+                  com quem negociar, então o gráfico mostra o CDI ano a ano e a participação no momento da venda: a sua
+                  fatia do valor da empresa, estimado em {CENARIOS[cenarioId].multiploReceita} vezes a receita recorrente
+                  anual.
                 </p>
               </div>
             </div>

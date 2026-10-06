@@ -35,6 +35,13 @@ export function Navegacao({ secoes, ativa }) {
       <p className="menu__atalho">
         Apresentando? Use as teclas <kbd>1</kbd> a <kbd>{secoes.length}</kbd> para pular entre as seções.
       </p>
+      <a className="menu__painel" href="./painel/index.html?demo=1" target="_blank" rel="noreferrer">
+        <span>
+          <small>Produto no ar</small>
+          Abrir o painel do lojista
+        </span>
+        <span aria-hidden="true">↗</span>
+      </a>
       <a className="menu__rodada" href="#investimento">
         <small>Rodada aberta</small>
         <strong>

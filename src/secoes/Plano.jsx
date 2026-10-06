@@ -6,7 +6,7 @@ export function Plano() {
     <>
       <Secao
         id="plano"
-        n="08"
+        n="09"
         rotulo="Plano de ação"
         titulo="Do plano ao que vai ser feito"
         lead="O primeiro ciclo do produto responde uma pergunta: o comerciante muda o preço quando vê o dado? E quanto de margem isso recupera?"

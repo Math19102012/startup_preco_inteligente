@@ -60,6 +60,23 @@ describe('investidor: CDI × startup', () => {
   });
 });
 
+describe('a rodada proposta ganha do CDI em todos os cenários', () => {
+  for (const cenario of Object.values(CENARIOS)) {
+    const projecao = projetarCenario(cenario);
+
+    it(`${cenario.nome}: pelo menos 40% acima do CDI de 15% e acima do CDI de 20%`, () => {
+      const r = simularInvestidor({ valor: 100_000, projecao, cdi: 0.15 });
+      expect(r.startupFinal).toBeGreaterThan(r.cdiFinal * 1.4);
+      const caro = simularInvestidor({ valor: 100_000, projecao, cdi: 0.2 });
+      expect(caro.startupFinal).toBeGreaterThan(caro.cdiFinal);
+    });
+
+    it(`${cenario.nome}: o caixa da captação basta, sem diluir o investidor`, () => {
+      expect(projecao.fatorDiluicao).toBe(1);
+    });
+  }
+});
+
 describe('diluição quando o caixa acaba', () => {
   it('capta o que falta e dilui quem já era sócio', () => {
     const caro = { ...CENARIOS.conservador, equipe: CENARIOS.conservador.equipe.map((v) => v * 2) };

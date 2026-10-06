@@ -1,59 +1,9 @@
 /* Layout: menu fixo à esquerda (no celular vira barra no topo) + coluna de leitura;
    bandas escuras em verde-petróleo abrem o site e a seção de investimento.
    Tema claro único, escolhido para projetor. Cores do deck do projeto. */
-:root {
-  --ink: #1d2530;
-  --ink-2: #46525e;
-  --muted: #66737f;
-  --line: #dde4e7;
-  --line-2: #eaeff1;
-  --paper: #ffffff;
-  --paper-2: #f4f7f8;
 
-  --teal: #0f6e72;
-  --teal-ink: #0b5558;
-  --teal-deep: #0b3b3e;
-  --teal-deeper: #072a2c;
-  --teal-tint: #eaf5f5;
-  --teal-soft: #bfdcdc;
-
-  --amber: #c0661a; /* Preço Inteligente nos gráficos */
-  --amber-ink: #95500f; /* texto em laranja sobre fundo claro */
-  --amber-tint: #fdf3e8;
-  --amber-soft: #f1c9a3;
-
-  --tag: #ffd84a; /* etiqueta de gôndola */
-  --tag-edge: #e8bd20;
-
-  --slate: #6b7a88; /* CDI e concorrentes */
-  --good: #1f7f84;
-  --bad: #c24a52;
-  --bad-tint: #fbecee;
-
-  --on-dark: #f1f7f7;
-  --on-dark-2: #a8c6c6;
-  --line-dark: #1f5659;
-
-  --font-display: 'Bricolage Grotesque Variable', 'Segoe UI', system-ui, sans-serif;
-  --font-body: 'Figtree Variable', 'Segoe UI', system-ui, sans-serif;
-  --font-tag: 'Barlow Condensed', 'Arial Narrow', 'Roboto Condensed', sans-serif;
-
-  --fs-hero: clamp(2.2rem, 3.4vw + 0.6rem, 3.6rem);
-  --fs-h2: clamp(1.9rem, 2.6vw + 0.8rem, 2.9rem);
-  --fs-h3: clamp(1.15rem, 0.6vw + 0.95rem, 1.35rem);
-  --fs-lead: clamp(1.05rem, 0.35vw + 0.98rem, 1.22rem);
-  --fs-body: 1.0625rem;
-  --fs-small: 0.9rem;
-  --fs-micro: 0.78rem;
-
-  --menu-w: 272px;
-  --gutter: clamp(16px, 4vw, 56px);
-  --radius: 14px;
-  --radius-sm: 8px;
-  --shadow: 0 1px 2px rgb(29 37 48 / 0.06), 0 8px 24px -12px rgb(29 37 48 / 0.18);
-
-  color-scheme: light;
-}
+@import './tokens.css';
+@import './components/etiqueta.css';
 
 *,
 *::before,
@@ -335,7 +285,8 @@ a {
   flex: none;
 }
 
-.menu__rodada {
+.menu__rodada,
+.menu__painel {
   display: none;
 }
 
@@ -456,8 +407,39 @@ a {
     padding: 0 5px;
   }
 
-  .menu__rodada {
+  .menu__painel {
     margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    background: var(--tag);
+    color: var(--ink);
+    font-weight: 700;
+    line-height: 1.25;
+    text-decoration: none;
+    transition: transform 0.15s;
+  }
+
+  .menu__painel:hover {
+    transform: translateY(-1px);
+  }
+
+  .menu__painel small {
+    display: block;
+    font-size: var(--fs-micro);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #5c5220;
+  }
+
+  .menu__painel > span:last-child {
+    font-size: 1.2rem;
+  }
+
+  .menu__rodada {
     display: grid;
     gap: 6px;
     padding: 16px;
@@ -486,100 +468,6 @@ a {
     color: var(--tag);
     font-weight: 600;
   }
-}
-
-/* ------------------------------------------------------------------ */
-/* Etiqueta de gôndola                                                  */
-/* ------------------------------------------------------------------ */
-.etiqueta {
-  --rot: 0deg;
-  position: relative;
-  display: grid;
-  gap: 2px;
-  background: var(--tag);
-  color: var(--ink);
-  border-radius: 6px 6px 10px 10px;
-  padding: 18px 18px 14px;
-  box-shadow: 0 1px 0 var(--tag-edge), 0 18px 30px -18px rgb(0 0 0 / 0.55);
-  transform: rotate(var(--rot));
-  min-width: 0;
-}
-
-.etiqueta::before {
-  content: '';
-  position: absolute;
-  top: 8px;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  margin-left: -5px;
-  border-radius: 50%;
-  background: var(--teal-deep);
-  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.4);
-}
-
-.etiqueta__produto {
-  font-size: var(--fs-micro);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding-top: 6px;
-}
-
-.etiqueta__preco {
-  display: flex;
-  align-items: flex-start;
-  gap: 4px;
-  font-family: var(--font-tag);
-  font-weight: 700;
-  line-height: 0.9;
-}
-
-.etiqueta__rs {
-  font-size: 1.1rem;
-  padding-top: 0.4em;
-}
-
-.etiqueta__inteiro {
-  font-size: clamp(3.4rem, 6vw, 5rem);
-  letter-spacing: -0.02em;
-}
-
-.etiqueta__centavos {
-  font-size: clamp(1.4rem, 2.2vw, 1.9rem);
-  padding-top: 0.15em;
-}
-
-.etiqueta__rodape {
-  font-size: var(--fs-micro);
-  font-weight: 600;
-  color: #4b4320;
-}
-
-.etiqueta--mini {
-  padding: 6px 9px 5px;
-  border-radius: 4px;
-  box-shadow: 0 1px 0 var(--tag-edge);
-  display: inline-flex;
-  width: fit-content;
-}
-
-.etiqueta--mini::before {
-  display: none;
-}
-
-.etiqueta--mini .etiqueta__rs {
-  font-size: 0.72rem;
-  padding-top: 0.2em;
-}
-
-.etiqueta--mini .etiqueta__inteiro {
-  font-size: 1.35rem;
-}
-
-.etiqueta--mini .etiqueta__centavos {
-  font-size: 0.85rem;
-  padding-top: 0.05em;
 }
 
 /* ------------------------------------------------------------------ */
@@ -2371,5 +2259,193 @@ input[type='range']::-moz-range-thumb {
 }
 
 .inicio .sobretitulo {
+  color: var(--on-dark-2);
+}
+
+/* ------------------------------------------------------------------ */
+/* O produto: vitrine do painel do lojista                             */
+/* ------------------------------------------------------------------ */
+.vitrine {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+
+.vitrine__abas {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+
+.vitrine__abas::-webkit-scrollbar {
+  display: none;
+}
+
+.vitrine__abas button {
+  flex: none;
+  font: inherit;
+  font-weight: 600;
+  font-size: var(--fs-small);
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--line-dark);
+  background: transparent;
+  color: var(--on-dark-2);
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.vitrine__abas button:hover {
+  color: var(--on-dark);
+  background: rgb(255 255 255 / 0.06);
+}
+
+.vitrine__abas button[aria-selected='true'] {
+  background: var(--tag);
+  border-color: var(--tag);
+  color: var(--ink);
+}
+
+.vitrine__palco {
+  display: grid;
+  gap: 28px;
+  align-items: start;
+}
+
+@media (min-width: 980px) {
+  .vitrine__palco {
+    grid-template-columns: minmax(0, 1fr) 210px;
+  }
+}
+
+.navegador,
+.celular {
+  margin: 0;
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.navegador > a {
+  display: block;
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+  background: var(--paper-2);
+  box-shadow: 0 30px 70px -30px rgb(0 0 0 / 0.75);
+}
+
+.navegador img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: top;
+  transition: transform 0.4s ease;
+}
+
+.navegador > a:hover img {
+  transform: scale(1.012);
+}
+
+.navegador__barra {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  margin-bottom: -14px;
+  border-radius: 12px 12px 0 0;
+  background: #e8edef;
+  color: var(--muted);
+  font-size: var(--fs-micro);
+}
+
+.navegador__barra i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #c8d0d4;
+}
+
+.navegador__barra span {
+  margin-left: 10px;
+  padding: 2px 12px;
+  border-radius: 999px;
+  background: var(--paper);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.navegador figcaption,
+.celular figcaption {
+  color: var(--on-dark-2);
+  font-size: var(--fs-small);
+  max-width: 70ch;
+}
+
+.celular {
+  justify-items: center;
+  text-align: center;
+}
+
+.celular__moldura {
+  width: min(210px, 60vw);
+  padding: 8px;
+  border-radius: 32px;
+  background: #061f21;
+  box-shadow: 0 0 0 1px var(--line-dark), 0 30px 60px -28px rgb(0 0 0 / 0.8);
+}
+
+.celular__moldura img {
+  width: 100%;
+  height: auto;
+  border-radius: 25px;
+}
+
+@media (max-width: 979px) {
+  .celular {
+    display: none;
+  }
+}
+
+.vitrine__botoes {
+  margin-top: 4px;
+}
+
+.integracoes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+}
+
+.integracoes li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 16px 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-dark);
+  background: rgb(255 255 255 / 0.03);
+}
+
+.integracoes svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--tag);
+}
+
+.integracoes strong {
+  display: block;
+  font-family: var(--font-display);
+}
+
+.integracoes span {
+  display: block;
+  font-size: var(--fs-small);
   color: var(--on-dark-2);
 }
