@@ -22,7 +22,7 @@ export function Plano() {
         </ol>
 
         <div className="bloco">
-          <Subtitulo titulo="5W2H do primeiro ciclo" />
+          <Subtitulo titulo="5W2H: o que o cliente recebe" />
           <dl className="w2h">
             {PLANO_5W2H.map((l) => (
               <div key={l.sigla}>
