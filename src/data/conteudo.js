@@ -343,14 +343,50 @@ export const RISCOS = [
 // ---------------------------------------------------------------------------
 // Plano de ação (5W2H) e resgate da promessa
 // ---------------------------------------------------------------------------
+// Do ponto de vista do cliente: o que o dono do mercadinho recebe.
 export const PLANO_5W2H = [
-  { sigla: 'What', pergunta: 'O quê', resposta: 'Lançar a primeira versão da plataforma web, com painel de preço da região e cálculo do preço mínimo viável.' },
-  { sigla: 'Why', pergunta: 'Por quê', resposta: 'Verificar se o comerciante muda o preço ao ver o dado, e medir quanto de margem isso recupera.' },
-  { sigla: 'Where', pergunta: 'Onde', resposta: 'Região metropolitana de São Paulo. Plataforma web responsiva, hospedada em nuvem.' },
-  { sigla: 'When', pergunta: 'Quando', resposta: 'Versão inicial até o fim do semestre, seguida de piloto de oito semanas com cinco lojas.' },
-  { sigla: 'Who', pergunta: 'Quem', resposta: 'Os quatro integrantes, divididos em dados, back-end, interface e contato com as lojas.' },
-  { sigla: 'How', pergunta: 'Como', resposta: 'Implantação em três passos, sprints de duas semanas em Python e versionamento em Git.' },
-  { sigla: 'How much', pergunta: 'Quanto', resposta: 'O cliente paga só a assinatura. Sem taxa de instalação, sem fidelidade, sem equipamento e sem custo por usuário.' },
+  {
+    sigla: 'What',
+    pergunta: 'O quê',
+    resposta:
+      'Um painel que mostra, item por item, quais produtos estão fora do preço da região e quanto isso custa por mês, com o custo real de cada um e a sugestão de preço pronta para a etiqueta.',
+  },
+  {
+    sigla: 'Why',
+    pergunta: 'Por quê',
+    resposta:
+      'Para recuperar a margem que escapa sem ele perceber: itens vendidos abaixo do custo real ou mais baratos que toda a vizinhança, e itens caros demais que afastam o cliente.',
+  },
+  {
+    sigla: 'Where',
+    pergunta: 'Onde',
+    resposta:
+      'No celular ou no computador do balcão, sem instalar nada. A comparação é com as lojas do próprio bairro e da cidade.',
+  },
+  {
+    sigla: 'When',
+    pergunta: 'Quando',
+    resposta:
+      'O primeiro diagnóstico chega em até 7 dias depois do cadastro, e a lista de ajustes é atualizada toda semana. O custo novo entra assim que a nota do fornecedor é importada.',
+  },
+  {
+    sigla: 'Who',
+    pergunta: 'Quem',
+    resposta:
+      'Donos de minimercados e mercearias de bairro, com 1 a 3 caixas e margem de lucro possivelmente apertada, que definem o preço sem saber quanto o vizinho cobra.',
+  },
+  {
+    sigla: 'How',
+    pergunta: 'Como',
+    resposta:
+      'Cadastra a loja pelo CNPJ, importa o XML da nota do fornecedor e o custo entra sozinho. Recebe as sugestões, aplica com um clique e imprime as etiquetas novas.',
+  },
+  {
+    sigla: 'How much',
+    pergunta: 'Quanto',
+    resposta:
+      'Grátis para consultar até 20 itens; R$ 79 por mês no plano Essencial e R$ 149 no Completo, sem instalação e sem fidelidade. Na loja típica, o ganho estimado é de R$ 440 por mês.',
+  },
 ];
 
 export const MARCOS = [
