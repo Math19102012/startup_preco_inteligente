@@ -33,6 +33,8 @@ const CAMINHOS = {
   lapis: 'M4 20l4-1L19 8l-3-3L5 16l-1 4zM14 7l3 3',
   sair: 'M14 4h5v16h-5M10 8l-4 4 4 4M6 12h10',
   relogio: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 2',
+  combo: 'M4 8h9v12H4zM9 8V4h11v12h-7',
+  pasta: 'M3 6h6l2 2h10v11H3V6z',
 };
 
 export function Icone({ nome, tamanho = 18, titulo }) {

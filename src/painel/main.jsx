@@ -8,12 +8,15 @@ import '../tokens.css';
 import '../components/etiqueta.css';
 import './painel.css';
 import { App } from './App.jsx';
+import { ProvedorCupons } from './estado/cupons.jsx';
 import { ProvedorLoja } from './estado/loja.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ProvedorLoja>
-      <App />
+      <ProvedorCupons>
+        <App />
+      </ProvedorCupons>
     </ProvedorLoja>
   </StrictMode>,
 );

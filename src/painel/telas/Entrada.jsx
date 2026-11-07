@@ -3,9 +3,12 @@ import { useState } from 'react';
 import { Etiqueta } from '../../components/Etiqueta.jsx';
 import { Icone, Marca } from '../../components/Icone.jsx';
 import { Aviso, Campo } from '../componentes/base.jsx';
+import { catalogoDemonstracao } from '../dados/catalogo.js';
 import { useLoja } from '../estado/loja.jsx';
 import { formatarCep, formatarCnpj, soDigitos } from '../lib/validacao.js';
 import { buscarCep, buscarCnpj } from '../servicos/apis.js';
+
+const ITENS_EXEMPLO = catalogoDemonstracao().length;
 
 const LOJA_EM_BRANCO = { cnpj: '', nome: '', logradouro: '', numero: '', bairro: '', cidade: '', uf: 'SP', cep: '' };
 
@@ -89,7 +92,7 @@ export function Entrada() {
       <section className="p-entrada__formulario" aria-labelledby="entrada-titulo">
         <div className="p-cartao p-entrada__cartao">
           <h2 id="entrada-titulo">Ver o painel funcionando</h2>
-          <p className="p-nota">Uma loja de exemplo, com 25 produtos e o diagnóstico da semana já pronto.</p>
+          <p className="p-nota">Uma loja de exemplo, com {ITENS_EXEMPLO} produtos, 8 semanas de cupons de venda e o diagnóstico da semana já pronto.</p>
           <button type="button" className="p-botao p-botao--tag p-botao--grande" onClick={() => despachar({ tipo: 'entrar-demonstracao' })}>
             Entrar na loja de demonstração
             <Icone nome="seta" tamanho={18} />
@@ -146,7 +149,7 @@ export function Entrada() {
               </Campo>
               <label className="p-check p-grade-form__inteiro">
                 <input type="checkbox" checked={comCatalogo} onChange={(e) => setComCatalogo(e.target.checked)} />
-                Começar com o catálogo de exemplo (25 produtos). Desmarque para começar vazio e importar a sua nota.
+                Começar com o catálogo de exemplo ({ITENS_EXEMPLO} produtos). Desmarque para começar vazio e importar a sua nota.
               </label>
               <button
                 type="button"
