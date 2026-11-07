@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Icone } from '../../components/Icone.jsx';
 import { Cabecalho, dataHora } from '../componentes/base.jsx';
+import { useCupons } from '../estado/cupons.jsx';
 import { chamadasRecentes, ouvirChamadas, SERVICOS, testarServico } from '../servicos/apis.js';
 
 const OUTRAS = [
@@ -11,6 +12,7 @@ const OUTRAS = [
     situacao: 'Ativa',
     tipo: 'ok',
     link: '#/nota',
+    textoLink: 'Importar uma nota',
   },
   {
     nome: 'ANP · preços de GLP',
@@ -21,6 +23,13 @@ const OUTRAS = [
   {
     nome: 'Sistema de caixa (PDV)',
     descricao: 'Catálogo, preço praticado e vendas por item direto do caixa da loja. Depende de parceria com o fornecedor do sistema.',
+    situacao: 'Próxima etapa',
+    tipo: 'futuro',
+  },
+  {
+    nome: 'Receita Federal · notas de compra automáticas',
+    descricao:
+      'Serviço Distribuição DF-e da NF-e: baixa sozinho as notas de compra emitidas contra o CNPJ da loja, em todos os estados, com o certificado digital da loja. Precisa de um servidor, que ainda não está no protótipo.',
     situacao: 'Próxima etapa',
     tipo: 'futuro',
   },
@@ -59,6 +68,34 @@ function CartaoServico({ id, servico }) {
   );
 }
 
+function CartaoCupons() {
+  const { pasta, cuponsLidos, leitura } = useCupons();
+  const conectada = pasta?.permissao === 'granted';
+  return (
+    <article className="p-integracao">
+      <header>
+        <h3>Cupons de venda (NFC-e) · pasta do caixa</h3>
+        <span className={`p-integracao__selo p-integracao__selo--${conectada ? 'ok' : 'futuro'}`}>
+          {conectada ? 'Conectada' : pasta ? 'Confirmar acesso' : 'Não conectada'}
+        </span>
+      </header>
+      <p>
+        Lê sozinho os XMLs dos cupons que o caixa grava no computador da loja, em qualquer estado. Alimenta os combos. O CPF do
+        consumidor não é lido.
+      </p>
+      {(conectada || cuponsLidos > 0) && (
+        <p className="p-micro">
+          {cuponsLidos} cupons lidos{leitura.quando ? ` · última leitura em ${dataHora(leitura.quando)}` : ''}
+          {pasta ? ` · pasta ${pasta.nome}` : ''}
+        </p>
+      )}
+      <a className="p-micro" href="#/combos">
+        {conectada ? 'Ver os combos' : 'Conectar a pasta'}
+      </a>
+    </article>
+  );
+}
+
 export function Integracoes() {
   const [chamadas, setChamadas] = useState(chamadasRecentes);
   useEffect(() => ouvirChamadas((c) => setChamadas([...c])), []);
@@ -73,6 +110,7 @@ export function Integracoes() {
         {Object.entries(SERVICOS).map(([id, s]) => (
           <CartaoServico key={id} id={id} servico={s} />
         ))}
+        <CartaoCupons />
         {OUTRAS.map((o) => (
           <article key={o.nome} className="p-integracao">
             <header>
@@ -82,7 +120,7 @@ export function Integracoes() {
             <p>{o.descricao}</p>
             {o.link && (
               <a className="p-micro" href={o.link}>
-                Importar uma nota
+                {o.textoLink}
               </a>
             )}
           </article>

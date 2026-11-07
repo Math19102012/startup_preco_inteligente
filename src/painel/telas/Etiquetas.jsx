@@ -11,6 +11,10 @@ export function Etiquetas() {
   const [todas, setTodas] = useState(pendentes.length === 0);
   const [impressas, setImpressas] = useState(false);
   const lista = (todas ? estado.produtos : pendentes).slice().sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+  const comPreco = estado.combos.filter((c) => c.preco !== null);
+  const cartazesPendentes = comPreco.filter((c) => c.cartazPendente);
+  const cartazes = todas ? comPreco : cartazesPendentes;
+  const semKg = (nome) => nome.replace(/,\s*kg$/i, '');
   const hoje = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
 
   function imprimir() {
@@ -24,9 +28,9 @@ export function Etiquetas() {
         titulo="Etiquetas"
         acoes={
           <>
-            <button type="button" className="p-botao p-botao--tag" onClick={imprimir} disabled={lista.length === 0}>
+            <button type="button" className="p-botao p-botao--tag" onClick={imprimir} disabled={lista.length + cartazes.length === 0}>
               <Icone nome="imprimir" tamanho={18} />
-              Imprimir {lista.length}
+              Imprimir {lista.length + cartazes.length}
             </button>
           </>
         }
@@ -37,15 +41,15 @@ export function Etiquetas() {
       <div className="p-filtros p-sem-impressao">
         <div className="p-chips" role="group" aria-label="Quais etiquetas">
           <button type="button" aria-pressed={!todas} onClick={() => setTodas(false)}>
-            Preço mudou <span className="num">{pendentes.length}</span>
+            Preço mudou <span className="num">{pendentes.length + cartazesPendentes.length}</span>
           </button>
           <button type="button" aria-pressed={todas} onClick={() => setTodas(true)}>
-            Todos os produtos <span className="num">{estado.produtos.length}</span>
+            Todos os produtos <span className="num">{estado.produtos.length + comPreco.length}</span>
           </button>
         </div>
       </div>
 
-      {impressas && pendentes.length > 0 && !todas && (
+      {impressas && pendentes.length + cartazesPendentes.length > 0 && !todas && (
         <div className="p-sem-impressao">
           <Aviso tipo="info">
             Já trocou na gôndola?{' '}
@@ -54,24 +58,43 @@ export function Etiquetas() {
               className="p-link"
               onClick={() => {
                 despachar({ tipo: 'etiquetas-impressas', ids: pendentes.map((p) => p.id) });
+                despachar({ tipo: 'cartazes-impressos', ids: cartazesPendentes.map((c) => c.id) });
                 setImpressas(false);
               }}
             >
-              Marcar as {pendentes.length} como trocadas
+              Marcar as {pendentes.length + cartazesPendentes.length} como trocadas
             </button>
           </Aviso>
         </div>
       )}
 
-      {lista.length === 0 ? (
-        <div className="p-cartao p-vazio">
-          Nenhuma etiqueta na fila. Quando você aplicar uma sugestão em <a href="#/precos">Preços da semana</a>, ela aparece aqui.
+      {cartazes.length > 0 && (
+        <div className="p-folha p-folha--combos" aria-label="Prévia dos cartazes de combo">
+          {cartazes.map((c) => (
+            <div key={c.id} className="p-cartaz">
+              <span className="p-cartaz__selo">Combo · {c.quando}</span>
+              <Etiqueta
+                valor={c.preco}
+                produto={`${semKg(c.nomeA)} + ${semKg(c.nomeB)}`}
+                rodape={c.tipoOferta === 'complemento' ? `${semKg(c.nomeB)} por kg levando ${semKg(c.nomeA).toLowerCase()}` : 'Leve os dois'}
+              />
+            </div>
+          ))}
         </div>
-      ) : (
+      )}
+
+      {lista.length > 0 && (
         <div className="p-folha" aria-label="Prévia da folha de etiquetas">
           {lista.map((p) => (
             <Etiqueta key={p.id} valor={p.preco} produto={p.nome} rodape={`${p.ean ?? p.categoria} · ${hoje}`} />
           ))}
+        </div>
+      )}
+
+      {lista.length === 0 && cartazes.length === 0 && (
+        <div className="p-cartao p-vazio">
+          Nenhuma etiqueta na fila. Quando você aplicar uma sugestão em <a href="#/precos">Preços da semana</a> ou criar um{' '}
+          <a href="#/combos">combo</a>, ela aparece aqui.
         </div>
       )}
     </>

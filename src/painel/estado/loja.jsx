@@ -8,7 +8,7 @@ import { faixaDaRegiao } from '../lib/regiao.js';
 
 const CHAVE = 'preco-inteligente:painel:v1';
 
-const VAZIO = { loja: null, config: CONFIG_PADRAO, produtos: [], alteracoes: [], notas: [] };
+const VAZIO = { loja: null, config: CONFIG_PADRAO, produtos: [], alteracoes: [], notas: [], combos: [], combosDispensados: [] };
 
 function carregar() {
   try {
@@ -92,6 +92,19 @@ function redutor(estado, acao) {
         importadaEm: agora(),
       };
       return { ...estado, produtos, notas: [registro, ...estado.notas] };
+    }
+    case 'criar-combo':
+      return {
+        ...estado,
+        combos: [{ ...acao.combo, id: novoId(), criadoEm: agora(), cartazPendente: true }, ...estado.combos],
+      };
+    case 'encerrar-combo':
+      return { ...estado, combos: estado.combos.filter((c) => c.id !== acao.id) };
+    case 'dispensar-combo':
+      return { ...estado, combosDispensados: [...estado.combosDispensados, acao.par] };
+    case 'cartazes-impressos': {
+      const ids = new Set(acao.ids);
+      return { ...estado, combos: estado.combos.map((c) => (ids.has(c.id) ? { ...c, cartazPendente: false } : c)) };
     }
     case 'etiquetas-impressas': {
       const ids = new Set(acao.ids);

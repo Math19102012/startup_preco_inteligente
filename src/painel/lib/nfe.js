@@ -18,17 +18,17 @@ function decodificar(texto) {
 }
 
 // Conteúdo do primeiro <tag> dentro de `xml` (aceita prefixo de namespace, ex.: <nfe:xProd>).
-function tag(xml, nome) {
+export function tag(xml, nome) {
   const m = xml?.match(new RegExp(`<(?:\\w+:)?${nome}(?:\\s[^>]*)?>([\\s\\S]*?)</(?:\\w+:)?${nome}>`));
   return m ? decodificar(m[1]) : null;
 }
 
-function blocos(xml, nome) {
+export function blocos(xml, nome) {
   const re = new RegExp(`<(?:\\w+:)?${nome}(?:\\s[^>]*)?>([\\s\\S]*?)</(?:\\w+:)?${nome}>`, 'g');
   return [...xml.matchAll(re)].map((m) => m[1]);
 }
 
-const numero = (v) => (v === null || v === '' ? 0 : Number(v));
+export const numero = (v) => (v === null || v === '' ? 0 : Number(v));
 
 export class ErroNotaFiscal extends Error {}
 
@@ -38,6 +38,9 @@ export function lerNotaFiscal(xml) {
   if (!infNFe) throw new ErroNotaFiscal('Não encontramos uma NF-e neste XML. Confira se é o XML da nota (e não o PDF do DANFE).');
 
   const ide = tag(infNFe, 'ide');
+  if (tag(ide, 'mod') === '65') {
+    throw new ErroNotaFiscal('Este XML é um cupom de venda (NFC-e), não uma nota de compra. Os cupons entram pela tela Combos.');
+  }
   const emit = tag(infNFe, 'emit');
   const chave = xml.match(/<(?:\w+:)?infNFe[^>]*\sId="NFe(\d{44})"/)?.[1] ?? null;
 
@@ -94,10 +97,10 @@ export function lerNotaFiscal(xml) {
 // Nota de exemplo, para quem quer testar sem ter um XML em mãos.
 // Fornecedor e chave fictícios; estrutura igual à de uma NF-e real.
 // ---------------------------------------------------------------------------
-const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+export const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 // Chave de 43 dígitos + dígito verificador (módulo 11, pesos 2 a 9).
-function chaveDeAcesso(base) {
+export function chaveDeAcesso(base) {
   let peso = 2;
   let soma = 0;
   for (let i = base.length - 1; i >= 0; i--) {

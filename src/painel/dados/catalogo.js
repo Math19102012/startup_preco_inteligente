@@ -37,6 +37,9 @@ export const REFERENCIA = [
   { ref: 'creme-dental', ean: cod(23), nome: 'Creme dental, 90 g', categoria: 'Higiene', faixa: [4.29, 4.79, 5.49] },
   { ref: 'farinha-1', ean: cod(24), nome: 'Farinha de trigo, 1 kg', categoria: 'Mercearia', faixa: [4.99, 5.49, 5.99] },
   { ref: 'molho-340', ean: cod(25), nome: 'Molho de tomate, 340 g', categoria: 'Mercearia', faixa: [1.99, 2.29, 2.59] },
+  { ref: 'pao-frances', ean: cod(28), nome: 'Pão francês, kg', categoria: 'Padaria', faixa: [13.99, 15.99, 18.99] },
+  { ref: 'mortadela-kg', ean: cod(29), nome: 'Mortadela fatiada, kg', categoria: 'Frios', faixa: [19.9, 24.9, 29.9] },
+  { ref: 'salgadinho', ean: cod(30), nome: 'Salgadinho de milho, 120 g', categoria: 'Mercearia', faixa: [6.49, 7.49, 8.49] },
   // Itens que ainda não estão no catálogo da loja: chegam pela nota fiscal de exemplo.
   { ref: 'achocolatado', ean: cod(26), nome: 'Achocolatado em pó, 400 g', categoria: 'Mercearia', faixa: [7.49, 8.29, 8.99] },
   { ref: 'extrato-140', ean: cod(27), nome: 'Extrato de tomate, 140 g', categoria: 'Mercearia', faixa: [2.19, 2.49, 2.79] },
@@ -69,6 +72,9 @@ const LOJA = {
   'creme-dental': [3.2, 4.99, 60],
   'farinha-1': [3.9, 4.19, 40],
   'molho-340': [1.7, 2.79, 70],
+  'pao-frances': [9.8, 15.99, 1100],
+  'mortadela-kg': [15.5, 24.9, 160],
+  salgadinho: [4.6, 7.49, 320],
 };
 
 export function catalogoDemonstracao() {

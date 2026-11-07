@@ -3,7 +3,7 @@
 Projeto em React (Vite) com duas páginas:
 
 - **Site de apresentação** (`index.html`): apresenta a startup **Preço Inteligente** para a banca e para investidores: o problema medido nos dados da ANP, a solução, o produto, a empresa, o mercado, o lucro do dono do mercadinho e o retorno de quem investe, comparado com o CDI.
-- **Painel do lojista** (`painel/index.html`): o produto em si, para o dono do mercadinho. Compara cada preço com a região, calcula o custo real, lê a nota fiscal do fornecedor e gera as etiquetas. Veja [Painel do lojista](#painel-do-lojista).
+- **Painel do lojista** (`painel/index.html`): o produto em si, para o dono do mercadinho. Compara cada preço com a região, calcula o custo real, lê a nota fiscal do fornecedor, sugere combos a partir dos cupons de venda e gera as etiquetas. Veja [Painel do lojista](#painel-do-lojista).
 
 O site é uma página única com menu lateral. Cada item do menu leva direto para uma parte do site. Durante a apresentação, as teclas **1 a 9** pulam para cada seção.
 
@@ -87,9 +87,10 @@ O painel é o produto que o dono do mercadinho usa. Abre com uma **loja de demon
 |---|---|
 | Visão geral | Quanto a loja deixa na mesa por mês, itens por situação, onde está o dinheiro e quanto já foi recuperado |
 | Preços da semana | Cada produto comparado com a faixa da região e com o custo real, com sugestão de preço pronta para aplicar |
+| Combos | Produtos que saem juntos, por dia e horário, tirados dos cupons de venda; preço do combo e medição antes e depois |
 | Produtos | Catálogo da loja; cadastro pelo código de barras |
 | Nota fiscal | Importa o XML da NF-e de compra, atualiza custos e cadastra produtos novos |
-| Etiquetas | Fila de etiquetas dos preços que mudaram, pronta para imprimir em A4 |
+| Etiquetas | Fila de etiquetas dos preços que mudaram e cartazes dos combos, prontos para imprimir em A4 |
 | Integrações | Teste ao vivo de cada API e registro das últimas chamadas |
 | Minha loja | Cadastro, custos que entram no preço (imposto, cartão, perdas, margem mínima) e plano |
 
@@ -99,8 +100,27 @@ O painel é o produto que o dono do mercadinho usa. Abre com uma **loja de demon
 - **Open Food Facts** (`world.openfoodfacts.org`): nome, marca e foto do produto pelo código de barras.
 - **NF-e**: leitura do XML da nota fiscal eletrônica de compra (layout 4.00), feita no próprio navegador. O custo por unidade inclui frete, seguro, outras despesas, IPI e ICMS-ST e desconta o desconto. Há uma nota de exemplo para testar.
 - **ANP**: faixa real de preço do botijão de gás nas 12 cidades da análise.
+- **Cupons de venda (NFC-e) pela pasta do caixa**: veja abaixo.
 
-**O que é simulado.** O preço da região dos itens de mercearia vem de uma base de demonstração (`src/painel/dados/catalogo.js`), já que São Paulo não publica os preços da nota fiscal do varejo; no produto, essa base vem da rede de lojas assinantes. Os dados da loja ficam salvos só no navegador (localStorage), sem servidor. As telas falam com o estado por `src/painel/estado/loja.jsx`, que é o ponto a trocar por chamadas a uma API própria quando houver back-end.
+**Pasta conectada (cupons de venda).** O programa de caixa grava o XML de cada cupom (NFC-e, modelo 65) numa pasta do computador da loja. Na tela Combos, o lojista conecta essa pasta uma vez; nas próximas aberturas do painel naquele computador, os cupons novos entram sozinhos. Funciona com cupons de qualquer estado.
+
+- Usa a File System Access API (Chrome e Edge no computador); o navegador guarda a autorização e pode pedir para confirmar o acesso de vez em quando. Nos outros navegadores, a pasta é importada à mão.
+- Lê as subpastas, desconta cupons cancelados (evento 110111) e não relê arquivos que já entraram. Notas de compra (modelo 55) na mesma pasta são contadas e deixadas para a tela Nota fiscal.
+- O CPF do consumidor ("CPF na nota") nunca é lido.
+- Os cupons ficam no IndexedDB do navegador (`src/painel/servicos/armazem.js`); "Apagar e sair" apaga tudo.
+- Se o caixa da loja for 100% online e não gravar arquivos, o caminho é integrar com a API desse sistema, o que pede servidor.
+
+**Como os combos são encontrados** (`src/painel/lib/combos.js`). Análise de cesta de compras com regras de associação entre pares de produtos, separada por dia da semana e período (manhã, tarde, noite) e também para a semana toda:
+
+- para cada par A + B, a taxa de quem leva A e também leva B, comparada com os outros cupons do mesmo momento (equivale ao *lift*);
+- só entra par com pelo menos 20 cupons juntos, taxa de 25% ou mais e pelo menos 1,5 vez o normal;
+- teste exato de Fisher com correção de Benjamini-Hochberg, porque muitos pares são testados ao mesmo tempo;
+- um segundo teste diz se o padrão é de um horário ("terça à tarde") ou da semana toda;
+- o preço parte de 10% de desconto no segundo produto e nunca deixa a margem abaixo da margem mínima da loja; produto vendido a quilo vira "desconto no complemento para quem leva o outro";
+- depois de criado, o combo é medido comparando a taxa de compra conjunta antes e depois.
+
+Com o volume de um minimercado (cerca de 100 cupons por dia), contar pares basta; Apriori ou FP-Growth só seriam necessários para combos de três ou mais itens.
+**O que é simulado.** O preço da região dos itens de mercearia vem de uma base de demonstração (`src/painel/dados/catalogo.js`), já que São Paulo não publica os preços da nota fiscal do varejo; no produto, essa base vem da rede de lojas assinantes. Os cupons de venda da loja de demonstração também são simulados (`src/painel/dados/cupons-demo.js`): 8 semanas, cerca de 100 por dia, com três padrões plantados de propósito (pão francês + mortadela na terça à tarde, salgadinho + refrigerante no sábado, macarrão + molho a semana toda). Na tela Combos há uma pasta de exemplo com os cupons de hoje para testar a conexão. Os dados da loja ficam salvos só no navegador (localStorage), sem servidor. As telas falam com o estado por `src/painel/estado/loja.jsx`, que é o ponto a trocar por chamadas a uma API própria quando houver back-end.
 
 **Como a sugestão é calculada** (`src/painel/lib/precificacao.js`):
 
@@ -134,8 +154,12 @@ src/
   assets/img/           imagens otimizadas (assets/img/painel: prints do painel)
   painel/               painel do lojista
     telas/              uma tela por arquivo
-    lib/                motor de preço, leitura da NF-e, preço da região, validação
+    lib/                motor de preço, combos, leitura da NF-e e da NFC-e, preço da região, validação
     servicos/apis.js    BrasilAPI, ViaCEP e Open Food Facts
+    servicos/pasta.js   pasta conectada do caixa
+    servicos/armazem.js cupons guardados no navegador (IndexedDB)
     estado/loja.jsx     estado da loja, salvo no navegador
+    estado/cupons.jsx   cupons de venda e análise de combos
     dados/catalogo.js   loja de demonstração e base de preços de referência
+    dados/cupons-demo.js cupons simulados da loja de demonstração
 ```

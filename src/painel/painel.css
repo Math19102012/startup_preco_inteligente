@@ -1869,3 +1869,264 @@ input[type='range']::-moz-range-thumb {
     gap: 10px;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Combos                                                              */
+/* ------------------------------------------------------------------ */
+.p-acoes--inicio {
+  justify-content: flex-start;
+}
+
+.p-fonte__numeros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+}
+
+.p-fonte__numeros div {
+  display: grid;
+  gap: 2px;
+}
+
+.p-fonte__numeros strong {
+  font-family: var(--font-tag);
+  font-size: 1.9rem;
+  line-height: 1;
+}
+
+.p-fonte__numeros span {
+  font-size: 0.85rem;
+  color: var(--ink-2);
+}
+
+.p-fonte__pasta,
+.p-fonte__conectar {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--paper-2);
+  font-size: 0.92rem;
+}
+
+.p-fonte__pasta > span {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.p-fonte__pasta svg {
+  color: var(--teal);
+}
+
+.p-combos {
+  display: grid;
+  gap: 16px;
+}
+
+.p-combo {
+  display: grid;
+  gap: 12px;
+  padding: clamp(18px, 2vw, 24px);
+  border-radius: var(--radius);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--tag);
+}
+
+.p-combo__topo {
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+}
+
+.p-combo__topo h3 {
+  font-size: 1.25rem;
+}
+
+.p-combo__quando {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--teal-deep);
+  color: var(--on-dark);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.p-combo__fato {
+  font-size: 1.02rem;
+  color: var(--ink-2);
+}
+
+.p-combo__fato b {
+  font-family: var(--font-tag);
+  font-size: 1.45rem;
+  color: var(--ink);
+}
+
+.p-combo__corpo {
+  display: grid;
+  gap: 16px 28px;
+  align-items: start;
+}
+
+@media (min-width: 760px) {
+  .p-combo__corpo {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+}
+
+.p-combo__lado {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.p-combo__oferta {
+  display: grid;
+  gap: 2px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--amber-tint);
+  color: var(--ink);
+}
+
+.p-combo__oferta small {
+  color: var(--amber-ink);
+  font-size: 0.82rem;
+}
+
+/* mapa de calor dia × período: um tom só, do claro ao escuro, com o número escrito */
+.p-calor {
+  border-collapse: separate;
+  border-spacing: 2px;
+  font-size: 0.78rem;
+}
+
+.p-calor caption {
+  caption-side: bottom;
+  max-width: 230px;
+  padding-top: 6px;
+  text-align: left;
+  color: var(--muted);
+  font-size: 0.74rem;
+}
+
+.p-calor th {
+  font-weight: 600;
+  color: var(--muted);
+  padding: 0 6px;
+  text-transform: capitalize;
+}
+
+.p-calor tbody th {
+  text-align: right;
+}
+
+.p-calor__celula {
+  width: 58px;
+  height: 26px;
+  text-align: center;
+  border-radius: 4px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--teal) calc(var(--forca, 0) * 85%), var(--teal-tint));
+}
+
+.p-calor__celula--escura {
+  color: #fff;
+  font-weight: 700;
+}
+
+.p-calor__celula--poucos {
+  background: var(--paper-2);
+  color: var(--muted);
+}
+
+.p-calor__celula--janela {
+  outline: 2px solid var(--amber);
+  outline-offset: -2px;
+}
+
+.p-ativos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.p-ativos li {
+  display: grid;
+  gap: 8px 20px;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+}
+
+@media (min-width: 900px) {
+  .p-ativos li {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) auto;
+  }
+}
+
+.p-ativos li > div:first-child {
+  display: grid;
+  gap: 2px;
+}
+
+.p-ativos__medida {
+  display: grid;
+  gap: 2px;
+  font-size: 0.88rem;
+  color: var(--ink-2);
+}
+
+.p-como summary {
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.p-como p {
+  color: var(--ink-2);
+  font-size: 0.92rem;
+}
+
+.p-folha--combos {
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.p-cartaz {
+  display: grid;
+  gap: 6px;
+  break-inside: avoid;
+}
+
+.p-cartaz__selo {
+  justify-self: start;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--teal-deep);
+  color: var(--on-dark);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+@media print {
+  .p-folha--combos {
+    grid-template-columns: repeat(2, 1fr);
+    margin-bottom: 8mm;
+  }
+
+  .p-cartaz__selo {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

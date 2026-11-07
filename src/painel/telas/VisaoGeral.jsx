@@ -4,7 +4,9 @@ import { Icone } from '../../components/Icone.jsx';
 import { PLANOS } from '../../data/premissas.js';
 import { multiplo, reais, reais0 } from '../../lib/formato.js';
 import { Cabecalho, dataCurta, irPara, SeloStatus } from '../componentes/base.jsx';
+import { useCupons } from '../estado/cupons.jsx';
 import { recuperadoPorMes, useLoja } from '../estado/loja.jsx';
+import { nomeNaFrase } from '../lib/combos.js';
 
 function saudacao() {
   const h = new Date().getHours();
@@ -64,6 +66,9 @@ export function VisaoGeral() {
   const { loja, alteracoes, produtos, notas } = estado;
   const plano = PLANOS.find((p) => p.id === loja.plano) ?? PLANOS[1];
   const recuperado = recuperadoPorMes(alteracoes, produtos);
+  const { analise } = useCupons();
+  const usados = new Set([...estado.combosDispensados, ...estado.combos.map((c) => `${c.a}|${c.b}`)]);
+  const combo = analise.sugestoes.find((s) => !usados.has(s.id));
   const pendentes = produtos.filter((p) => p.etiquetaPendente).length;
   const comFaixa = linhas.filter((l) => l.faixa);
   const amostras = comFaixa.length ? Math.round(comFaixa.reduce((s, l) => s + l.faixa.amostras, 0) / comFaixa.length) : 0;
@@ -148,6 +153,23 @@ export function VisaoGeral() {
               </a>
             )}
           </section>
+
+          {combo && (
+            <section className="p-cartao">
+              <header className="p-cartao__topo">
+                <h2>Combo sugerido</h2>
+                <Icone nome="combo" tamanho={22} />
+              </header>
+              <p className="p-nota">
+                <b>{combo.quando}:</b> {Math.round(combo.taxaCom * 100)}% de quem leva {nomeNaFrase(combo.a.nome)} também leva{' '}
+                {nomeNaFrase(combo.b.nome)}.
+              </p>
+              <a className="p-botao p-botao--contorno" href="#/combos">
+                <Icone nome="combo" tamanho={18} />
+                Ver os combos da semana
+              </a>
+            </section>
+          )}
 
           <section className="p-cartao">
             <header className="p-cartao__topo">

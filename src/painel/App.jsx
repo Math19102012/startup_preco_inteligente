@@ -3,7 +3,9 @@ import { Icone, Marca } from '../components/Icone.jsx';
 import { PLANOS } from '../data/premissas.js';
 import { reaisCompacto } from '../lib/formato.js';
 import { useRota } from './componentes/base.jsx';
+import { useCupons } from './estado/cupons.jsx';
 import { useLoja } from './estado/loja.jsx';
+import { Combos } from './telas/Combos.jsx';
 import { Diagnostico } from './telas/Diagnostico.jsx';
 import { Entrada } from './telas/Entrada.jsx';
 import { Etiquetas } from './telas/Etiquetas.jsx';
@@ -16,6 +18,7 @@ import { VisaoGeral } from './telas/VisaoGeral.jsx';
 const TELAS = [
   { id: 'inicio', rotulo: 'Visão geral', icone: 'casa', Componente: VisaoGeral },
   { id: 'precos', rotulo: 'Preços da semana', icone: 'alvo', Componente: Diagnostico },
+  { id: 'combos', rotulo: 'Combos', icone: 'combo', Componente: Combos },
   { id: 'produtos', rotulo: 'Produtos', icone: 'caixa', Componente: Produtos },
   { id: 'nota', rotulo: 'Nota fiscal', icone: 'documento', Componente: NotaFiscal },
   { id: 'etiquetas', rotulo: 'Etiquetas', icone: 'etiqueta', Componente: Etiquetas },
@@ -25,6 +28,7 @@ const TELAS = [
 
 export function App() {
   const { estado, despachar, resumo } = useLoja();
+  const { analise } = useCupons();
   const rota = useRota();
 
   // ?demo=1 (link da apresentação) abre direto a loja de demonstração
@@ -39,7 +43,10 @@ export function App() {
   const { Componente } = tela;
   const plano = PLANOS.find((p) => p.id === estado.loja.plano) ?? PLANOS[1];
   const pendentes = estado.produtos.filter((p) => p.etiquetaPendente).length;
-  const contadores = { precos: resumo.ajustes, etiquetas: pendentes };
+  const usados = new Set([...estado.combosDispensados, ...estado.combos.map((c) => `${c.a}|${c.b}`)]);
+  const combosNovos = analise.sugestoes.filter((s) => !usados.has(s.id)).length;
+  const cartazes = estado.combos.filter((c) => c.cartazPendente).length;
+  const contadores = { precos: resumo.ajustes, combos: combosNovos, etiquetas: pendentes + cartazes };
 
   return (
     <div className="p-app">
