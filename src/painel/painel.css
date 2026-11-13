@@ -259,30 +259,6 @@ select {
   min-height: 100vh;
 }
 
-.p-faixa-demo {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px 16px;
-  padding: 9px clamp(16px, 3vw, 40px);
-  background: var(--amber-tint);
-  border-bottom: 1px solid var(--amber-soft);
-  color: var(--amber-ink);
-  font-size: 0.9rem;
-}
-
-.p-faixa-demo button {
-  border: 0;
-  background: none;
-  padding: 0;
-  color: var(--amber-ink);
-  font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-}
-
 .p-conteudo {
   flex: 1;
   width: 100%;
@@ -1447,7 +1423,6 @@ select {
   }
 
   .p-lateral,
-  .p-faixa-demo,
   .p-rodape,
   .p-cabecalho,
   .p-sem-impressao,
@@ -1477,81 +1452,6 @@ select {
     box-shadow: none;
     border: 1px dashed #b8a24a;
   }
-}
-
-/* ------------------------------------------------------------------ */
-/* Integrações                                                         */
-/* ------------------------------------------------------------------ */
-.p-integracoes {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-}
-
-.p-integracao {
-  display: grid;
-  gap: 10px;
-  align-content: start;
-  padding: 18px;
-  border-radius: var(--radius);
-  background: var(--paper);
-  border: 1px solid var(--line);
-}
-
-.p-integracao header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-.p-integracao h3 {
-  font-size: 1.02rem;
-}
-
-.p-integracao p {
-  color: var(--ink-2);
-  font-size: 0.9rem;
-}
-
-.p-integracao__selo {
-  flex: none;
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 2px 9px;
-  border-radius: 999px;
-  white-space: nowrap;
-}
-
-.p-integracao__selo--ok {
-  background: var(--teal-tint);
-  color: var(--teal-ink);
-}
-
-.p-integracao__selo--futuro {
-  background: var(--paper-2);
-  color: var(--muted);
-}
-
-.p-integracao__teste {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 12px;
-  font-size: 0.88rem;
-}
-
-.p-integracao__teste > span {
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px;
-}
-
-.p-integracao__teste small {
-  flex-basis: 100%;
-  font-weight: 400;
-  color: var(--muted);
 }
 
 /* ------------------------------------------------------------------ */

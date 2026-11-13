@@ -79,18 +79,34 @@ describe('leitura da pasta', () => {
 describe('combos', () => {
   const historico = historicoDemonstracao(produtos, HOJE);
   const r = analisarCombos(historico, { produtoDe, cfg: CONFIG_PADRAO });
-  const achar = (a, b) => r.sugestoes.find((s) => s.a.produto?.ref === a && s.b.produto?.ref === b);
+  // o par pode sair em qualquer ordem: o primeiro é o produto que mais aparece nos cupons
+  const achar = (a, b) =>
+    r.sugestoes.find(
+      (s) => (s.a.produto?.ref === a && s.b.produto?.ref === b) || (s.a.produto?.ref === b && s.b.produto?.ref === a),
+    );
 
   it('o histórico de demonstração tem cerca de 100 cupons por dia', () => {
     expect(historico.length / 56).toBeGreaterThan(95);
     expect(historico.length / 56).toBeLessThan(115);
   });
 
-  it('encontra os três padrões plantados, com o momento certo', () => {
-    expect(r.sugestoes).toHaveLength(3);
+  it('encontra os seis padrões plantados, cada um na janela certa, e nenhum outro', () => {
+    expect(r.sugestoes).toHaveLength(6);
     expect(achar('pao-frances', 'mortadela-kg').quando).toBe('Terça à tarde');
-    expect(achar('salgadinho', 'refri-2l').quando).toMatch(/^Sábado/);
+    expect(achar('salgadinho', 'refri-2l').quando).toBe('Sábado, o dia todo');
     expect(achar('macarrao-500', 'molho-340').quando).toBe('A semana toda');
+    expect(achar('pao-frances', 'leite-1').quando).toBe('Todos os dias de manhã');
+    expect(achar('cerveja-lata', 'amendoim').quando).toBe('Sexta à noite');
+    expect(achar('linguica-kg', 'carvao').quando).toBe('Fim de semana');
+  });
+
+  it('acha os mesmos seis em outras semanas de cupons', () => {
+    for (const hoje of ['2026-10-06', '2026-11-20', '2026-12-15']) {
+      const outra = analisarCombos(historicoDemonstracao(produtos, hoje), { produtoDe, cfg: CONFIG_PADRAO });
+      expect(outra.sugestoes.map((s) => s.quando).sort()).toEqual(
+        ['A semana toda', 'Fim de semana', 'Sexta à noite', 'Sábado, o dia todo', 'Terça à tarde', 'Todos os dias de manhã'],
+      );
+    }
   });
 
   it('não inventa padrão quando os produtos são comprados de forma independente', () => {
@@ -114,6 +130,7 @@ describe('combos', () => {
     }
     expect(achar('pao-frances', 'mortadela-kg').preco.tipo).toBe('complemento');
     expect(achar('salgadinho', 'refri-2l').preco.tipo).toBe('kit');
+    expect(achar('cerveja-lata', 'amendoim').preco.tipo).toBe('kit');
   });
 
   it('sem margem para desconto, sugere só expor junto', () => {

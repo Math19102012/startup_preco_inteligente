@@ -7,10 +7,13 @@
 // Volume: a premissa do site é um minimercado de R$ 80 mil por mês; com gasto médio de cerca de
 // R$ 25 por cupom, são uns 3.200 cupons por mês (100 a 110 por dia).
 //
-// Três padrões de compra foram plantados de propósito, para mostrar o que a análise encontra:
+// Seis padrões de compra foram plantados de propósito, para mostrar o que a análise encontra:
 //   - terça à tarde, quem leva pão francês costuma levar mortadela;
 //   - sábado, quem leva salgadinho costuma levar refrigerante;
-//   - a semana toda, quem leva macarrão costuma levar molho de tomate.
+//   - a semana toda, quem leva macarrão costuma levar molho de tomate;
+//   - toda manhã, quem leva pão francês costuma levar leite;
+//   - sexta à noite, quem leva cerveja costuma levar amendoim;
+//   - no fim de semana, quem leva linguiça costuma levar carvão.
 // Fora isso, os produtos entram nos cupons de forma independente, conforme as vendas de cada um.
 import { chaveDeCupom, chaveDoItem } from '../lib/cupons.js';
 
@@ -26,7 +29,18 @@ export const PADROES = [
   { quando: (dia, hora) => dia === 2 && hora >= 12 && hora < 18, se: 'pao-frances', leva: 'mortadela-kg', chance: 0.45 },
   { quando: (dia) => dia === 6, se: 'salgadinho', leva: 'refri-2l', chance: 0.5 },
   { quando: () => true, se: 'macarrao-500', leva: 'molho-340', chance: 0.35 },
+  { quando: (dia, hora) => hora < 12, se: 'pao-frances', leva: 'leite-1', chance: 0.4 },
+  { quando: (dia, hora) => dia === 5 && hora >= 18, se: 'cerveja-lata', leva: 'amendoim', chance: 0.55 },
+  { quando: (dia) => dia === 6 || dia === 0, se: 'linguica-kg', leva: 'carvao', chance: 0.55 },
 ];
+
+// Itens que vendem mais em certos momentos (churrasco no fim de semana, cerveja na sexta à noite).
+function reforco(ref, dia, hora) {
+  if (dia === 6 && (ref === 'salgadinho' || ref === 'cerveja-lata')) return 1.6;
+  if (dia === 5 && hora >= 18 && ref === 'cerveja-lata') return 1.6;
+  if ((dia === 6 || dia === 0) && ref === 'linguica-kg') return 2.5;
+  return 1;
+}
 
 // gerador pseudoaleatório com semente (mulberry32)
 function sorteador(semente) {
@@ -67,7 +81,6 @@ export function cuponsDoDia(data, produtos, { padroes = PADROES } = {}) {
   const dia = new Date(Date.UTC(a, m - 1, d)).getUTCDay();
   const porRef = new Map(produtos.filter((p) => p.ref).map((p) => [p.ref, p]));
   const vendaveis = [...porRef.values()].filter((p) => p.vendasMes > 0);
-  const sabado = dia === 6;
   if (vendaveis.length === 0) return [];
 
   const horas = Object.entries(HORAS);
@@ -88,8 +101,7 @@ export function cuponsDoDia(data, produtos, { padroes = PADROES } = {}) {
     const minuto = Math.floor(sorteio() * 60);
     const levados = new Set();
     for (const p of vendaveis) {
-      let chance = p.vendasMes / CUPONS_POR_MES;
-      if (sabado && (p.ref === 'salgadinho' || p.ref === 'cerveja-lata')) chance *= 1.6;
+      const chance = (p.vendasMes / CUPONS_POR_MES) * reforco(p.ref, dia, hora);
       if (sorteio() < Math.min(0.6, chance)) levados.add(p.ref);
     }
     for (const padrao of padroes) {

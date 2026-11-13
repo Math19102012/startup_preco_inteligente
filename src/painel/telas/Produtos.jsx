@@ -10,7 +10,7 @@ import { faixaDaRegiao } from '../lib/regiao.js';
 import { eanInterno, eanValido, soDigitos } from '../lib/validacao.js';
 import { buscarProdutoPorEan } from '../servicos/apis.js';
 
-const CATEGORIAS = ['Mercearia', 'Bebidas', 'Laticínios', 'Frios', 'Padaria', 'Hortifrúti', 'Limpeza', 'Higiene', 'Gás', 'Outros'];
+const CATEGORIAS = ['Mercearia', 'Bebidas', 'Laticínios', 'Frios', 'Açougue', 'Padaria', 'Hortifrúti', 'Limpeza', 'Higiene', 'Gás', 'Outros'];
 const NOVO = { ean: '', nome: '', categoria: 'Mercearia', custo: 0, preco: 0, vendasMes: 30, imagem: null };
 
 function Formulario({ inicial, onSalvar, onRemover }) {
