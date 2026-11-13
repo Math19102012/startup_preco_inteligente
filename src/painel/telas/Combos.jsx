@@ -6,7 +6,7 @@ import { numero, pct, reais } from '../../lib/formato.js';
 import { Aviso, Cabecalho, dataHora } from '../componentes/base.jsx';
 import { useCupons } from '../estado/cupons.jsx';
 import { useLoja } from '../estado/loja.jsx';
-import { idMomento, medirCombo, nomeNaFrase } from '../lib/combos.js';
+import { idMomento, medirCombo, nomeNaFrase, vendidoPorKg } from '../lib/combos.js';
 import { DIAS, PERIODOS } from '../lib/cupons.js';
 
 const ORDEM_DIAS = [1, 2, 3, 4, 5, 6, 0]; // segunda a domingo
@@ -77,13 +77,14 @@ function Oferta({ s }) {
     return <p className="p-combo__oferta">Sem margem para desconto: deixe os dois lado a lado na gôndola.</p>;
   }
   if (p.tipo === 'complemento') {
+    const kg = vendidoPorKg(s.b.produto) ? '/kg' : '';
     return (
       <p className="p-combo__oferta">
         <span>
-          <b>{s.b.nome.split(',')[0]}</b> por <b className="num">{reais(p.preco)}/kg</b> para quem leva {nomeNaFrase(s.a.nome)}
+          <b>{s.b.nome.split(',')[0]}</b> por <b className="num">{reais(p.preco)}{kg}</b> para quem leva {nomeNaFrase(s.a.nome)}
         </span>
         <small>
-          de {reais(p.precoOriginal)}/kg · margem de {pct(p.margem, 0)} nesse preço
+          de {reais(p.precoOriginal)}{kg} · margem de {pct(p.margem, 0)} nesse preço
         </small>
       </p>
     );
@@ -101,7 +102,7 @@ function Oferta({ s }) {
 }
 
 function CartaoSugestao({ s, semanas, onCriar, onDispensar }) {
-  const momentoTexto = s.janela.tipo === 'semana' ? 'em qualquer dia' : s.quando.toLowerCase();
+  const momentoTexto = s.quandoFrase ?? 'em qualquer dia';
   return (
     <article className="p-combo">
       <header className="p-combo__topo">
@@ -321,7 +322,7 @@ export function Combos() {
     const oferta = !p?.viavel
       ? 'lado a lado na gôndola'
       : p.tipo === 'complemento'
-        ? `${s.b.nome.split(',')[0]} a ${reais(p.preco)}/kg levando ${nomeNaFrase(s.a.nome)}`
+        ? `${s.b.nome.split(',')[0]} a ${reais(p.preco)}${vendidoPorKg(s.b.produto) ? '/kg' : ''} levando ${nomeNaFrase(s.a.nome)}`
         : `os dois por ${reais(p.preco)}`;
     despachar({
       tipo: 'criar-combo',
@@ -335,6 +336,7 @@ export function Combos() {
         oferta,
         preco: p?.viavel ? p.preco : null,
         tipoOferta: p?.viavel ? p.tipo : 'vitrine',
+        complementoPorKg: vendidoPorKg(s.b.produto),
       },
     });
   }

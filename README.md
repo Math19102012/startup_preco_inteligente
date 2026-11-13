@@ -83,6 +83,8 @@ São estimativas do grupo para fins acadêmicos, não recomendação de investim
 
 O painel é o produto que o dono do mercadinho usa. Abre com uma **loja de demonstração** (link `painel/index.html?demo=1`, que é o que o botão do site usa) ou com o cadastro de uma loja real pelo CNPJ.
 
+A loja de demonstração tem 56 produtos, 8 semanas de cupons de venda, seis combos para encontrar e um histórico de seis semanas de uso (três preços já ajustados e duas notas importadas). O diagnóstico dela é de R$ 672 por mês em 8 itens, o número usado no banner e no one page; um teste confere que ele não muda. Quando o catálogo ou o histórico da demonstração mudam, `VERSAO_DEMONSTRACAO` (em `src/painel/dados/catalogo.js`) sobe e quem já tinha a demonstração salva no navegador recebe a versão nova.
+
 | Tela | O que faz |
 |---|---|
 | Visão geral | Quanto a loja deixa na mesa por mês, itens por situação, onde está o dinheiro e quanto já foi recuperado |
@@ -91,10 +93,9 @@ O painel é o produto que o dono do mercadinho usa. Abre com uma **loja de demon
 | Produtos | Catálogo da loja; cadastro pelo código de barras |
 | Nota fiscal | Importa o XML da NF-e de compra, atualiza custos e cadastra produtos novos |
 | Etiquetas | Fila de etiquetas dos preços que mudaram e cartazes dos combos, prontos para imprimir em A4 |
-| Integrações | Teste ao vivo de cada API e registro das últimas chamadas |
 | Minha loja | Cadastro, custos que entram no preço (imposto, cartão, perdas, margem mínima) e plano |
 
-**Integrações funcionando.** Todas são chamadas direto do navegador, sem chave de acesso:
+**Integrações funcionando.** Todas são chamadas direto do navegador, sem chave de acesso, dentro das telas que as usam (cadastro da loja, Minha loja, Produtos, Nota fiscal e Combos):
 
 - **BrasilAPI** (`brasilapi.com.br`): dados da loja pelo CNPJ (Receita Federal) e endereço pelo CEP, com **ViaCEP** de reserva.
 - **Open Food Facts** (`world.openfoodfacts.org`): nome, marca e foto do produto pelo código de barras.
@@ -115,12 +116,12 @@ O painel é o produto que o dono do mercadinho usa. Abre com uma **loja de demon
 - para cada par A + B, a taxa de quem leva A e também leva B, comparada com os outros cupons do mesmo momento (equivale ao *lift*);
 - só entra par com pelo menos 20 cupons juntos, taxa de 25% ou mais e pelo menos 1,5 vez o normal;
 - teste exato de Fisher com correção de Benjamini-Hochberg, porque muitos pares são testados ao mesmo tempo;
-- um segundo teste diz se o padrão é de um horário ("terça à tarde") ou da semana toda;
+- o motor testa janelas de calendário (um horário, um dia inteiro, todas as manhãs, dias úteis, fim de semana) e fica com a que melhor separa o padrão do resto da semana (estatística G, p < 0,001); se nenhuma se destaca, o combo vale a semana toda;
 - o preço parte de 10% de desconto no segundo produto e nunca deixa a margem abaixo da margem mínima da loja; produto vendido a quilo vira "desconto no complemento para quem leva o outro";
 - depois de criado, o combo é medido comparando a taxa de compra conjunta antes e depois.
 
 Com o volume de um minimercado (cerca de 100 cupons por dia), contar pares basta; Apriori ou FP-Growth só seriam necessários para combos de três ou mais itens.
-**O que é simulado.** O preço da região dos itens de mercearia vem de uma base de demonstração (`src/painel/dados/catalogo.js`), já que São Paulo não publica os preços da nota fiscal do varejo; no produto, essa base vem da rede de lojas assinantes. Os cupons de venda da loja de demonstração também são simulados (`src/painel/dados/cupons-demo.js`): 8 semanas, cerca de 100 por dia, com três padrões plantados de propósito (pão francês + mortadela na terça à tarde, salgadinho + refrigerante no sábado, macarrão + molho a semana toda). Na tela Combos há uma pasta de exemplo com os cupons de hoje para testar a conexão. Os dados da loja ficam salvos só no navegador (localStorage), sem servidor. As telas falam com o estado por `src/painel/estado/loja.jsx`, que é o ponto a trocar por chamadas a uma API própria quando houver back-end.
+**O que é simulado.** O preço da região dos itens de mercearia vem de uma base de demonstração (`src/painel/dados/catalogo.js`), já que São Paulo não publica os preços da nota fiscal do varejo; no produto, essa base vem da rede de lojas assinantes. Os cupons de venda da loja de demonstração também são simulados (`src/painel/dados/cupons-demo.js`): 8 semanas, cerca de 100 por dia, com seis padrões plantados de propósito (pão francês + mortadela na terça à tarde, salgadinho + refrigerante no sábado, macarrão + molho a semana toda, pão francês + leite todas as manhãs, cerveja + amendoim na sexta à noite e linguiça + carvão no fim de semana). Na tela Combos há uma pasta de exemplo com os cupons de hoje para testar a conexão. Os dados da loja ficam salvos só no navegador (localStorage), sem servidor. As telas falam com o estado por `src/painel/estado/loja.jsx`, que é o ponto a trocar por chamadas a uma API própria quando houver back-end.
 
 **Como a sugestão é calculada** (`src/painel/lib/precificacao.js`):
 

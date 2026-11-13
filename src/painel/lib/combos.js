@@ -9,8 +9,9 @@
 //   - quantas vezes mais                                       → razão         (≈ lift)
 //   - é por acaso? teste exato de Fisher (unilateral), com correção de Benjamini-Hochberg porque
 //     muitos pares são testados ao mesmo tempo (sem ela, sempre aparece algum padrão falso).
-// Depois, para o melhor momento de cada par, um segundo teste diz se o padrão é daquele horário
-// ("terça à tarde") ou vale a semana toda.
+// Depois, para cada par aprovado, o motor procura a janela de calendário (um horário, um dia,
+// todas as manhãs, fim de semana...) que melhor separa o padrão do resto da semana; se nenhuma
+// se destaca, o combo vale a semana toda.
 //
 // Com o volume de um minimercado (cerca de 100 cupons por dia), contar pares é suficiente:
 // algoritmos como Apriori ou FP-Growth só seriam necessários para combos de três ou mais itens.
@@ -22,11 +23,13 @@ export const OPCOES_PADRAO = {
   minTaxa: 0.25, // pelo menos 25% de quem leva A leva B
   minRazao: 1.5, // e 1,5 vez mais que nos outros cupons do mesmo momento
   fdr: 0.05, // até 5% de padrões falsos entre os aprovados
-  pTempo: 0.001, // exigência para dizer que o padrão é de um horário específico
+  gTempo: 10.83, // exigência para dizer que o padrão é de um horário específico (p < 0,001)
   desconto: 0.1, // desconto de partida no produto que a promoção quer empurrar
 };
 
 const TODOS = 'todos';
+
+export const vendidoPorKg = (produto) => Boolean(produto?.nome && /,\s*kg$/i.test(produto.nome.trim()));
 
 // "Salgadinho de milho, 120 g" → "salgadinho de milho", para caber numa frase
 export function nomeNaFrase(nome) {
@@ -87,29 +90,59 @@ const semanasDe = (cupons) => {
   return Math.max(1, datas.size / 7);
 };
 
-export function descreverJanela(janela) {
-  if (janela.tipo === 'semana') return 'A semana toda';
-  const porDia = new Map();
-  for (const m of janela.momentos) {
-    const [dia, periodo] = m.split('-');
-    porDia.set(Number(dia), [...(porDia.get(Number(dia)) ?? []), periodo]);
+// Janelas de calendário em que um combo pode valer. O motor testa todas e fica com a que
+// melhor separa o padrão do resto da semana; assim o resultado sai em termos que o lojista
+// usa ("terça à tarde", "todas as manhãs", "fim de semana"), e não numa lista de horários.
+const SEMANA = [1, 2, 3, 4, 5, 6, 0];
+const UTEIS = [1, 2, 3, 4, 5];
+const FDS = [6, 0];
+const nomeDia = (d) => DIAS[d][0].toUpperCase() + DIAS[d].slice(1);
+const artigo = (d) => (d === 6 || d === 0 ? 'no' : 'na');
+const momentosDe = (dias, periodos) => dias.flatMap((d) => periodos.map((p) => idMomento(d, p)));
+
+export function janelasCandidatas() {
+  const todos = PERIODOS.map((p) => p.id);
+  const janelas = [];
+  for (const d of SEMANA) {
+    for (const p of PERIODOS) {
+      janelas.push({ tipo: 'momento', momentos: momentosDe([d], [p.id]), texto: `${nomeDia(d)} ${p.quando}`, frase: `${artigo(d)} ${DIAS[d]} ${p.quando}` });
+    }
+    janelas.push({ tipo: 'dia', momentos: momentosDe([d], todos), texto: `${nomeDia(d)}, o dia todo`, frase: `${artigo(d)} ${DIAS[d]}` });
   }
-  return [...porDia.entries()]
-    .map(([dia, periodos]) => {
-      const nome = DIAS[dia][0].toUpperCase() + DIAS[dia].slice(1);
-      if (periodos.length === PERIODOS.length) return `${nome}, o dia todo`;
-      const ps = PERIODOS.filter((p) => periodos.includes(p.id)).map((p) => p.quando);
-      return `${nome} ${ps.join(' e ')}`;
-    })
-    .join(' · ');
+  for (const p of PERIODOS) {
+    janelas.push({ tipo: 'periodo', momentos: momentosDe(SEMANA, [p.id]), texto: `Todos os dias ${p.quando}`, frase: `toda ${p.rotulo}` });
+    janelas.push({ tipo: 'uteis', momentos: momentosDe(UTEIS, [p.id]), texto: `De segunda a sexta ${p.quando}`, frase: `de segunda a sexta ${p.quando}` });
+    janelas.push({ tipo: 'fds', momentos: momentosDe(FDS, [p.id]), texto: `Fim de semana ${p.quando}`, frase: `no fim de semana ${p.quando}` });
+  }
+  janelas.push({ tipo: 'fds', momentos: momentosDe(FDS, todos), texto: 'Fim de semana', frase: 'no fim de semana' });
+  return janelas;
+}
+
+export const JANELA_SEMANA = { tipo: 'semana', momentos: [], texto: 'A semana toda', frase: 'em qualquer dia' };
+
+export function descreverJanela(janela) {
+  return janela.texto ?? JANELA_SEMANA.texto;
+}
+
+// Estatística G (razão de verossimilhança) de uma tabela 2×2: mede quanto a taxa de B entre os
+// cupons com A muda dentro e fora da janela. Não estoura para valores muito significativos, ao
+// contrário do p-valor, então serve para comparar janelas. G ≥ 10,83 equivale a p < 0,001.
+function estatisticaG(a, b, c, d) {
+  const n = a + b + c + d;
+  const termo = (o, e) => (o > 0 ? o * Math.log(o / e) : 0);
+  const l1 = a + b;
+  const l2 = c + d;
+  const c1 = a + c;
+  const c2 = b + d;
+  if (!l1 || !l2 || !c1 || !c2) return 0;
+  return 2 * (termo(a, (l1 * c1) / n) + termo(b, (l1 * c2) / n) + termo(c, (l2 * c1) / n) + termo(d, (l2 * c2) / n));
 }
 
 // Preço da promoção. Produto vendido a quilo vira "desconto no complemento para quem leva A";
 // os demais viram "leve os dois por R$ X". A margem nunca fica abaixo da margem mínima da loja.
 export function precificarCombo(a, b, cfg, desconto = OPCOES_PADRAO.desconto) {
   if (!a?.preco || !b?.preco) return null;
-  const kg = (p) => /,\s*kg$/i.test(p.nome.trim());
-  if (kg(a) || kg(b)) {
+  if (vendidoPorKg(a) || vendidoPorKg(b)) {
     const minimo = b.custo > 0 ? precoMinimo(b.custo, cfg, cfg.margemMinima) : 0;
     let preco = arredondarPreco(b.preco * (1 - desconto), cfg.finais, 'baixo');
     if (preco < minimo) preco = arredondarPreco(minimo, cfg.finais, 'cima');
@@ -203,21 +236,27 @@ export function analisarCombos(cupons, { produtoDe = () => null, cfg, opcoes = {
       }
     }
 
-    let janela = { tipo: 'semana', momentos: [] };
-    let dentro = estat([TODOS]);
+    // a janela de calendário que melhor separa o padrão do resto da semana
+    const todos = estat([TODOS]);
+    let janela = JANELA_SEMANA;
+    let dentro = todos;
     let fora = null;
+    let melhorG = o.gTempo;
     if (especificos.length) {
-      const melhor = especificos[0];
-      const momentos = especificos.filter((c) => c.taxaCom >= melhor.taxaCom * 0.75).map((c) => c.momento);
-      const todos = estat([TODOS]);
-      const noMomento = estat(momentos);
-      // entre os cupons com A, B aparece mais nesses momentos do que no resto da semana?
-      const pTempo = caudaHipergeometrica(lf, todos.na, todos.nab, noMomento.na, noMomento.nab);
-      const taxaFora = todos.na > noMomento.na ? (todos.nab - noMomento.nab) / (todos.na - noMomento.na) : 0;
-      if (pTempo < o.pTempo && noMomento.taxaCom >= taxaFora * 1.3) {
-        janela = { tipo: 'momento', momentos };
-        dentro = noMomento;
-        fora = { taxa: taxaFora, cuponsComA: todos.na - noMomento.na };
+      for (const j of janelasCandidatas()) {
+        const d = estat(j.momentos);
+        if (d.nab < o.minCupons || d.na >= todos.na) continue;
+        const naFora = todos.na - d.na;
+        const nabFora = todos.nab - d.nab;
+        const taxaFora = nabFora / naFora;
+        if (d.taxaCom < taxaFora * 1.3) continue;
+        const g = estatisticaG(d.nab, d.na - d.nab, nabFora, naFora - nabFora);
+        if (g > melhorG) {
+          melhorG = g;
+          janela = j;
+          dentro = d;
+          fora = { taxa: taxaFora, cuponsComA: naFora };
+        }
       }
     }
     // padrão "da semana toda" só vale se ele também passou no teste com todos os cupons
@@ -229,8 +268,9 @@ export function analisarCombos(cupons, { produtoDe = () => null, cfg, opcoes = {
       id: `${a}|${b}`,
       a: { chave: a, nome: pa?.nome ?? a, produto: pa },
       b: { chave: b, nome: pb?.nome ?? b, produto: pb },
-      janela,
-      quando: descreverJanela(janela),
+      janela: { tipo: janela.tipo, momentos: janela.momentos },
+      quando: janela.texto,
+      quandoFrase: janela.frase,
       taxaCom: dentro.taxaCom,
       taxaSem: dentro.taxaSem,
       razao: dentro.razao,
@@ -245,7 +285,8 @@ export function analisarCombos(cupons, { produtoDe = () => null, cfg, opcoes = {
     });
   }
 
-  sugestoes.sort((x, y) => (y.janela.tipo === 'momento') - (x.janela.tipo === 'momento') || y.oportunidadeSemana - x.oportunidadeSemana);
+  // padrões com dia e horário primeiro (são os que viram promoção), depois os da semana toda
+  sugestoes.sort((x, y) => (y.janela.tipo !== 'semana') - (x.janela.tipo !== 'semana') || y.oportunidadeSemana - x.oportunidadeSemana);
   return { sugestoes, cupons: cupons.length, semanas, testados: candidatos.length };
 }
 

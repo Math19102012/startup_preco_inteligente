@@ -76,7 +76,11 @@ export function Etiquetas() {
               <Etiqueta
                 valor={c.preco}
                 produto={`${semKg(c.nomeA)} + ${semKg(c.nomeB)}`}
-                rodape={c.tipoOferta === 'complemento' ? `${semKg(c.nomeB)} por kg levando ${semKg(c.nomeA).toLowerCase()}` : 'Leve os dois'}
+                rodape={
+                  c.tipoOferta === 'complemento'
+                    ? `${semKg(c.nomeB)}${c.complementoPorKg ? ' por kg' : ''} levando ${semKg(c.nomeA).toLowerCase()}`
+                    : 'Leve os dois'
+                }
               />
             </div>
           ))}

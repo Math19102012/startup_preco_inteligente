@@ -2,7 +2,7 @@
 // Fica salvo no navegador (localStorage). Na versão com servidor, este é o ponto onde
 // as ações viram chamadas à API do Preço Inteligente; as telas não mudam.
 import { createContext, useContext, useEffect, useMemo, useReducer } from 'react';
-import { catalogoDemonstracao, LOJA_DEMONSTRACAO } from '../dados/catalogo.js';
+import { catalogoDemonstracao, historicoDemonstracaoLoja, LOJA_DEMONSTRACAO, VERSAO_DEMONSTRACAO } from '../dados/catalogo.js';
 import { CONFIG_PADRAO, diagnosticar, resumir } from '../lib/precificacao.js';
 import { faixaDaRegiao } from '../lib/regiao.js';
 
@@ -13,6 +13,10 @@ const VAZIO = { loja: null, config: CONFIG_PADRAO, produtos: [], alteracoes: [],
 function carregar() {
   try {
     const salvo = JSON.parse(localStorage.getItem(CHAVE));
+    // loja de demonstração salva numa versão antiga: recomeça com a demonstração atual
+    if (salvo?.loja?.demonstracao && salvo.loja.versaoDemonstracao !== VERSAO_DEMONSTRACAO) {
+      return redutor(VAZIO, { tipo: 'entrar-demonstracao' });
+    }
     if (salvo?.loja) return { ...VAZIO, ...salvo, config: { ...CONFIG_PADRAO, ...salvo.config } };
   } catch {
     // armazenamento indisponível ou corrompido: começa do zero
@@ -38,8 +42,10 @@ function aplicarPrecos(estado, itens, motivo) {
 
 function redutor(estado, acao) {
   switch (acao.tipo) {
-    case 'entrar-demonstracao':
-      return { ...VAZIO, loja: { ...LOJA_DEMONSTRACAO, desde: agora() }, produtos: catalogoDemonstracao() };
+    case 'entrar-demonstracao': {
+      const { desde, alteracoes, notas } = historicoDemonstracaoLoja();
+      return { ...VAZIO, loja: { ...LOJA_DEMONSTRACAO, desde }, produtos: catalogoDemonstracao(), alteracoes, notas };
+    }
     case 'criar-loja':
       return {
         ...VAZIO,

@@ -94,6 +94,15 @@ describe('preço', () => {
     expect(r.recuperavel).toBeGreaterThan(300);
     expect(r.recuperavel).toBeLessThan(1200);
   });
+
+  it('a demonstração tem pelo menos 50 produtos e mantém os números do banner e do one page', () => {
+    const produtos = catalogoDemonstracao();
+    expect(produtos.length).toBeGreaterThanOrEqual(50);
+    const linhas = produtos.map((p) => ({ produto: p, diagnostico: diagnosticar(p, faixaDaRegiao(p, LOJA_DEMONSTRACAO), cfg) }));
+    // "R$ 672 por mês em 8 itens abaixo da região ou no prejuízo"
+    expect(Math.round(resumir(linhas).recuperavel)).toBe(672);
+    expect(linhas.filter((l) => l.diagnostico.impactoMes > 0)).toHaveLength(8);
+  });
 });
 
 describe('região', () => {

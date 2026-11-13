@@ -9,7 +9,6 @@ import { Combos } from './telas/Combos.jsx';
 import { Diagnostico } from './telas/Diagnostico.jsx';
 import { Entrada } from './telas/Entrada.jsx';
 import { Etiquetas } from './telas/Etiquetas.jsx';
-import { Integracoes } from './telas/Integracoes.jsx';
 import { MinhaLoja } from './telas/MinhaLoja.jsx';
 import { NotaFiscal } from './telas/NotaFiscal.jsx';
 import { Produtos } from './telas/Produtos.jsx';
@@ -22,7 +21,6 @@ const TELAS = [
   { id: 'produtos', rotulo: 'Produtos', icone: 'caixa', Componente: Produtos },
   { id: 'nota', rotulo: 'Nota fiscal', icone: 'documento', Componente: NotaFiscal },
   { id: 'etiquetas', rotulo: 'Etiquetas', icone: 'etiqueta', Componente: Etiquetas },
-  { id: 'integracoes', rotulo: 'Integrações', icone: 'plugue', Componente: Integracoes },
   { id: 'loja', rotulo: 'Minha loja', icone: 'ajuste', Componente: MinhaLoja },
 ];
 
@@ -91,16 +89,6 @@ export function App() {
       </aside>
 
       <div className="p-principal">
-        {estado.loja.demonstracao && (
-          <div className="p-faixa-demo">
-            <span>
-              <b>Loja de demonstração.</b> Mexa à vontade: os dados ficam só neste navegador.
-            </span>
-            <button type="button" onClick={() => despachar({ tipo: 'sair' })}>
-              Cadastrar minha loja
-            </button>
-          </div>
-        )}
         <main id="conteudo" className="p-conteudo" tabIndex={-1}>
           <Componente parametros={rota.parametros} />
         </main>
